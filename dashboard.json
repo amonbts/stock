@@ -6,7 +6,9 @@
     "BossaG",
     "BossaE",
     "XTB",
-    "Binnance"
+    "Binnance",
+    "ETFs",
+    "Stocks"
   ],
   "widgets": [
     {
@@ -15,7 +17,7 @@
       "tvSymbolUrl": "NYSE-NOW",
       "interval": "60",
       "height": 500,
-      "groups": ["XTB"]
+      "groups": ["XTB","Stocks"]
     },
     {
       "title": "Meta Platforms Inc Class A",
@@ -23,15 +25,32 @@
       "tvSymbolUrl": "NASDAQ-META",
       "interval": "60",
       "height": 500,
-       "groups": ["XTB"]
+       "groups": ["XTB","Stocks"]
     },
     {
       "title": "Tesla, Inc.",
       "symbol": "NASDAQ:TSLA",
-      "tvSymbolUrl": "ASDAQ-TSLA",
+      "tvSymbolUrl": "NASDAQ-TSLA",
       "interval": "60",
       "height": 500,
-      "groups": ["XTB"]
+      "groups": ["XTB","Stocks"]
+    },
+    {
+      "title": "Lam Research Corporation",
+      "symbol": "NASDAQ:LRCX",
+      "tvSymbolUrl": "NASDAQ-LRCX",
+      "interval": "60",
+      "height": 500,
+      "groups": ["XTB","Stocks"]
+    },
+    {
+      "title": "iShares S&P 500 Information Technology Sector UCITS ETF",
+      "symbol": "LSE:IUIT",
+      "tvSymbolUrl": "LSE-IUIT",
+      "interval": "60",
+      "height": 500,
+      "groups": ["XTB","ETFs"]
     }
+    
   ]
 }
