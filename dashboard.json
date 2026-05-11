@@ -1,0 +1,25 @@
+{
+  "title": "Trading Dashboard",
+  "description": "Crypto monitoring dashboard",
+  "theme": "dark",
+  "widgets": [
+    {
+      "title": "Bitcoin 1H",
+      "symbol": "BINANCE:BTCUSDT",
+      "interval": "60",
+      "height": 500
+    },
+    {
+      "title": "Ethereum 4H",
+      "symbol": "BINANCE:ETHUSDT",
+      "interval": "240",
+      "height": 500
+    },
+    {
+      "title": "Solana Daily",
+      "symbol": "BINANCE:SOLUSDT",
+      "interval": "D",
+      "height": 500
+    }
+  ]
+}
