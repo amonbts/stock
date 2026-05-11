@@ -2,6 +2,8 @@ let dashboardConfig = null;
 
 let selectedGroups = new Set();
 
+let searchQuery = '';
+
 async function loadDashboard() {
 
   const response =
@@ -17,6 +19,8 @@ async function loadDashboard() {
     dashboardConfig.description;
 
   buildGroupFilters();
+
+  setupSearch();
 
   renderWidgets();
 }
@@ -134,6 +138,41 @@ function addControlButtons(container) {
     });
 }
 
+function debounce(fn, delay) {
+
+  let timeout;
+
+  return (...args) => {
+
+    clearTimeout(timeout);
+
+    timeout = setTimeout(() => {
+      fn(...args);
+    }, delay);
+  };
+}
+
+function setupSearch() {
+
+  const input =
+    document.getElementById('search-input');
+
+  const debouncedSearch =
+    debounce((value) => {
+
+      searchQuery =
+        value.trim().toLowerCase();
+
+      renderWidgets();
+
+    }, 200);
+
+  input.addEventListener('input', (e) => {
+
+    debouncedSearch(e.target.value);
+  });
+}
+
 function renderWidgets() {
 
   const grid =
@@ -143,6 +182,10 @@ function renderWidgets() {
 
   let widgets =
     dashboardConfig.widgets;
+
+  //
+  // GROUP FILTER
+  //
 
   if (selectedGroups.size > 0) {
 
@@ -154,29 +197,89 @@ function renderWidgets() {
     });
   }
 
+  //
+  // SEARCH FILTER
+  //
+
+  if (searchQuery.length > 0) {
+
+    widgets = widgets.filter(widget => {
+
+      const searchableText = [
+
+        widget.title,
+
+        widget.symbol,
+
+        ...(widget.groups || [])
+
+      ]
+        .join(' ')
+        .toLowerCase();
+
+      return searchableText.includes(
+        searchQuery
+      );
+    });
+  }
+
+  //
+  // EMPTY STATE
+  //
+
+  if (widgets.length === 0) {
+
+    grid.innerHTML = `
+
+      <div class="col-12">
+
+        <div class="alert alert-secondary">
+
+          No widgets found.
+
+        </div>
+
+      </div>
+    `;
+
+    return;
+  }
+
+  //
+  // RENDER WIDGETS
+  //
+
   widgets.forEach((widget, index) => {
 
-    const widgetId = `tv-widget-${index}`;
+    const widgetId =
+      `tv-widget-${index}`;
 
-    const col = document.createElement('div');
+    const col =
+      document.createElement('div');
 
     col.className = 'col';
 
     col.innerHTML = `
+
       <div class="card shadow-sm h-100">
+
         <div class="card-body">
 
-          <div class="d-flex justify-content-between align-items-start mb-3">
+          <div
+            class="d-flex justify-content-between align-items-start mb-3">
+
             <h5 class="card-title">
               ${widget.title}
             </h5>
 
             <div class="text-end">
+
               ${widget.groups.map(group => `
                 <span class="badge text-bg-secondary">
                   ${group}
                 </span>
               `).join('')}
+
             </div>
 
           </div>
@@ -187,20 +290,26 @@ function renderWidgets() {
           </div>
 
           <div class="tradingview-widget-copyright">
+
             <a
               href="https://www.tradingview.com/symbols/${widget.tvSymbolUrl}/"
               rel="noopener nofollow"
               target="_blank">
+
               <span class="blue-text">
                 ${widget.symbol} chart
               </span>
+
             </a>
+
             <span class="trademark">
               by TradingView
             </span>
+
           </div>
 
         </div>
+
       </div>
     `;
 
