@@ -48,7 +48,8 @@ function renderTradingViewWidget(containerId, widget) {
   new TradingView.widget({
     container_id: containerId,
 
-    autosize: true,
+    // autosize: true,
+    width: "100%",
 
     symbol: widget.symbol,
 
