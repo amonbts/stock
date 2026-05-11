@@ -1,5 +1,7 @@
 let dashboardConfig = null;
 
+let selectedGroups = new Set();
+
 async function loadDashboard() {
 
   const response =
@@ -14,35 +16,125 @@ async function loadDashboard() {
   document.getElementById('dashboard-description').innerText =
     dashboardConfig.description;
 
-  buildGroupFilter();
+  buildGroupFilters();
 
-  renderWidgets('ALL');
+  renderWidgets();
 }
 
-function buildGroupFilter() {
+function buildGroupFilters() {
 
-  const select =
-    document.getElementById('group-filter');
+  const container =
+    document.getElementById('group-filters');
 
   dashboardConfig.groups.forEach(group => {
 
-    const option =
-      document.createElement('option');
+    const wrapper =
+      document.createElement('div');
 
-    option.value = group;
+    wrapper.className =
+      'form-check form-check-inline';
 
-    option.innerText = group;
+    wrapper.innerHTML = `
+      <input
+        class="btn-check"
+        type="checkbox"
+        id="group-${group}"
+        value="${group}"
+        autocomplete="off">
 
-    select.appendChild(option);
+      <label
+        class="btn btn-outline-primary"
+        for="group-${group}">
+        ${group}
+      </label>
+    `;
+
+    container.appendChild(wrapper);
+
+    const checkbox =
+      wrapper.querySelector('input');
+
+    checkbox.addEventListener('change', () => {
+
+      if (checkbox.checked) {
+
+        selectedGroups.add(group);
+
+      } else {
+
+        selectedGroups.delete(group);
+      }
+
+      renderWidgets();
+    });
   });
 
-  select.addEventListener('change', (e) => {
-
-    renderWidgets(e.target.value);
-  });
+  addControlButtons(container);
 }
 
-function renderWidgets(selectedGroup) {
+function addControlButtons(container) {
+
+  const controls =
+    document.createElement('div');
+
+  controls.className =
+    'ms-3 d-inline-flex gap-2';
+
+  controls.innerHTML = `
+
+    <button
+      class="btn btn-sm btn-secondary"
+      id="select-all-btn">
+
+      Select all
+
+    </button>
+
+    <button
+      class="btn btn-sm btn-outline-secondary"
+      id="clear-all-btn">
+
+      Clear
+
+    </button>
+  `;
+
+  container.appendChild(controls);
+
+  document
+    .getElementById('select-all-btn')
+    .addEventListener('click', () => {
+
+      dashboardConfig.groups.forEach(group => {
+
+        selectedGroups.add(group);
+
+        document.getElementById(
+          `group-${group}`
+        ).checked = true;
+      });
+
+      renderWidgets();
+    });
+
+  document
+    .getElementById('clear-all-btn')
+    .addEventListener('click', () => {
+
+      selectedGroups.clear();
+
+      dashboardConfig.groups.forEach(group => {
+
+        document.getElementById(
+          `group-${group}`
+        ).checked = false;
+      });
+
+      renderWidgets();
+    });
+}
+
+function renderWidgets() {
 
   const grid =
     document.getElementById('widgets-grid');
@@ -52,11 +144,14 @@ function renderWidgets(selectedGroup) {
   let widgets =
     dashboardConfig.widgets;
 
-  if (selectedGroup !== 'ALL') {
+  if (selectedGroups.size > 0) {
 
-    widgets = widgets.filter(widget =>
-      widget.groups.includes(selectedGroup)
-    );
+    widgets = widgets.filter(widget => {
+
+      return widget.groups.some(group =>
+        selectedGroups.has(group)
+      );
+    });
   }
 
   widgets.forEach((widget, index) => {
@@ -71,12 +166,12 @@ function renderWidgets(selectedGroup) {
       <div class="card shadow-sm h-100">
         <div class="card-body">
 
-          <div class="d-flex justify-content-between mb-2">
+          <div class="d-flex justify-content-between align-items-start mb-3">
             <h5 class="card-title">
               ${widget.title}
             </h5>
 
-            <div>
+            <div class="text-end">
               ${widget.groups.map(group => `
                 <span class="badge text-bg-secondary">
                   ${group}
@@ -111,17 +206,42 @@ function renderWidgets(selectedGroup) {
 
     grid.appendChild(col);
 
-    renderTradingViewWidget(widgetId, widget);
+    setupLazyWidget(widgetId, widget);
   });
 }
 
-function renderTradingViewWidget(containerId, widget) {
+function setupLazyWidget(containerId, widget) {
 
   const container =
     document.getElementById(containerId);
 
   container.style.height =
     `${widget.height}px`;
+
+  const observer =
+    new IntersectionObserver(entries => {
+
+      entries.forEach(entry => {
+
+        if (entry.isIntersecting) {
+
+          renderTradingViewWidget(
+            containerId,
+            widget
+          );
+
+          observer.unobserve(container);
+        }
+      });
+
+    }, {
+      rootMargin: '300px'
+    });
+
+  observer.observe(container);
+}
+
+function renderTradingViewWidget(containerId, widget) {
 
   new TradingView.widget({
 
