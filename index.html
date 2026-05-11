@@ -6,9 +6,7 @@
   <title>Trading Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
-    rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
 
   <link rel="stylesheet" href="styles.css">
 
@@ -16,22 +14,33 @@
 </head>
 
 <body>
+  <div class="d-flex justify-content-between align-items-center mb-4">
 
-<div class="container py-4">
+    <div>
+      <select id="group-filter" class="form-select">
 
-  <header class="pb-3 mb-4 border-bottom">
-    <h1 id="dashboard-title"></h1>
-    <p class="text-body-secondary" id="dashboard-description"></p>
-  </header>
+        <option value="ALL">
+          All groups
+        </option>
 
-  <div
-    id="widgets-grid"
-    class="row row-cols-1 row-cols-md-2 g-4">
+      </select>
+    </div>
+
+  </div>
+  <div class="container py-4">
+
+    <header class="pb-3 mb-4 border-bottom">
+      <h1 id="dashboard-title"></h1>
+      <p class="text-body-secondary" id="dashboard-description"></p>
+    </header>
+
+    <div id="widgets-grid" class="row row-cols-1 row-cols-md-2 g-4">
+    </div>
+
   </div>
 
-</div>
-
-<script src="app.js"></script>
+  <script src="app.js"></script>
 
 </body>
+
 </html>

@@ -24,3 +24,7 @@ body {
 .blue-text {
   color: #2962ff;
 }
+
+.badge {
+  margin-left: 4px;
+}

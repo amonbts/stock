@@ -1,18 +1,65 @@
+let dashboardConfig = null;
+
 async function loadDashboard() {
 
-  const response = await fetch('./dashboard.json');
+  const response =
+    await fetch('./dashboard.json');
 
-  const config = await response.json();
+  dashboardConfig =
+    await response.json();
 
   document.getElementById('dashboard-title').innerText =
-    config.title;
+    dashboardConfig.title;
 
   document.getElementById('dashboard-description').innerText =
-    config.description;
+    dashboardConfig.description;
 
-  const grid = document.getElementById('widgets-grid');
+  buildGroupFilter();
 
-  config.widgets.forEach((widget, index) => {
+  renderWidgets('ALL');
+}
+
+function buildGroupFilter() {
+
+  const select =
+    document.getElementById('group-filter');
+
+  dashboardConfig.groups.forEach(group => {
+
+    const option =
+      document.createElement('option');
+
+    option.value = group;
+
+    option.innerText = group;
+
+    select.appendChild(option);
+  });
+
+  select.addEventListener('change', (e) => {
+
+    renderWidgets(e.target.value);
+  });
+}
+
+function renderWidgets(selectedGroup) {
+
+  const grid =
+    document.getElementById('widgets-grid');
+
+  grid.innerHTML = '';
+
+  let widgets =
+    dashboardConfig.widgets;
+
+  if (selectedGroup !== 'ALL') {
+
+    widgets = widgets.filter(widget =>
+      widget.groups.includes(selectedGroup)
+    );
+  }
+
+  widgets.forEach((widget, index) => {
 
     const widgetId = `tv-widget-${index}`;
 
@@ -24,9 +71,20 @@ async function loadDashboard() {
       <div class="card shadow-sm h-100">
         <div class="card-body">
 
-          <h5 class="card-title mb-3">
-            ${widget.title}
-          </h5>
+          <div class="d-flex justify-content-between mb-2">
+            <h5 class="card-title">
+              ${widget.title}
+            </h5>
+
+            <div>
+              ${widget.groups.map(group => `
+                <span class="badge text-bg-secondary">
+                  ${group}
+                </span>
+              `).join('')}
+            </div>
+
+          </div>
 
           <div
             id="${widgetId}"
@@ -59,26 +117,43 @@ async function loadDashboard() {
 
 function renderTradingViewWidget(containerId, widget) {
 
+  const container =
+    document.getElementById(containerId);
+
+  container.style.height =
+    `${widget.height}px`;
+
   new TradingView.widget({
+
     container_id: containerId,
-    // autosize: true,
+
     width: "100%",
+
+    height: widget.height,
+
     symbol: widget.symbol,
+
     interval: widget.interval,
+
     timezone: 'Europe/Warsaw',
+
     theme: 'dark',
+
     style: '1',
+
     locale: 'en',
-    studies:["STD;SMA","STD;Momentum"],
-    interval:"D",
+    studies: ["STD;SMA", "STD;Momentum"],
+    interval: "D",
     withdateranges: true,
+
     enable_publishing: false,
-    hide_top_toolbar: false,    
+
+    hide_top_toolbar: false,
     hide_side_toolbar: false,
     hide_side_toolbar: false,
     hide_legend: false,
-    save_image: false,
-    height: widget.height
+
+    save_image: false
   });
 }
 

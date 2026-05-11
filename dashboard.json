@@ -2,27 +2,37 @@
   "title": "Trading Dashboard",
   "description": "Crypto monitoring dashboard",
   "theme": "dark",
+    "groups": [
+    "Crypto",
+    "Large Cap",
+    "Layer1",
+    "AI",
+    "Forex"
+  ],
   "widgets": [
     {
       "title": "Bitcoin 1H",
       "symbol": "BINANCE:BTCUSDT",
       "tvSymbolUrl": "BTCUSDT",
       "interval": "60",
-      "height": 500
+      "height": 500,
+      "groups": ["Crypto", "Large Cap"]
     },
     {
       "title": "Ethereum 4H",
       "symbol": "BINANCE:ETHUSDT",
       "tvSymbolUrl": "BTCUSDT",
       "interval": "240",
-      "height": 500
+      "height": 500,
+       "groups": ["Crypto", "Layer1", "Large Cap"]
     },
     {
       "title": "Solana Daily",
       "symbol": "BINANCE:SOLUSDT",
       "tvSymbolUrl": "BTCUSDT",
       "interval": "D",
-      "height": 500
+      "height": 500,
+      "groups": ["Crypto", "AI"]
     }
   ]
 }
