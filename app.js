@@ -18,11 +18,124 @@ async function loadDashboard() {
   document.getElementById('dashboard-description').innerText =
     dashboardConfig.description;
 
+  loadStateFromUrl();
+
   buildGroupFilters();
 
   setupSearch();
 
+  syncUiWithState();
+
   renderWidgets();
+}
+
+function updateUrlState() {
+
+  const params =
+    new URLSearchParams();
+
+  if (selectedGroups.size > 0) {
+
+    params.set(
+      'groups',
+      [...selectedGroups].join(',')
+    );
+  }
+
+  if (searchQuery.length > 0) {
+
+    params.set(
+      'search',
+      searchQuery
+    );
+  }
+
+  const queryString =
+    params.toString();
+
+  const newUrl =
+    queryString.length > 0
+      ? `${window.location.pathname}?${queryString}`
+      : window.location.pathname;
+
+  window.history.replaceState(
+    {},
+    '',
+    newUrl
+  );
+}
+
+function loadStateFromUrl() {
+
+  const params =
+    new URLSearchParams(
+      window.location.search
+    );
+
+  //
+  // GROUPS
+  //
+
+  const groups =
+    params.get('groups');
+
+  if (groups) {
+
+    groups
+      .split(',')
+      .forEach(group => {
+
+        selectedGroups.add(group);
+      });
+  }
+
+  //
+  // SEARCH
+  //
+
+  const search =
+    params.get('search');
+
+  if (search) {
+
+    searchQuery =
+      search.toLowerCase();
+  }
+}
+
+function syncUiWithState() {
+
+  //
+  // CHECKBOXES
+  //
+
+  selectedGroups.forEach(group => {
+
+    const checkbox =
+      document.getElementById(
+        `group-${group}`
+      );
+
+    if (checkbox) {
+
+      checkbox.checked = true;
+    }
+  });
+
+  //
+  // SEARCH INPUT
+  //
+
+  const searchInput =
+    document.getElementById(
+      'search-input'
+    );
+
+  if (searchInput) {
+
+    searchInput.value =
+      searchQuery;
+  }
 }
 
 function buildGroupFilters() {
@@ -68,6 +181,8 @@ function buildGroupFilters() {
 
         selectedGroups.delete(group);
       }
+
+      updateUrlState();
 
       renderWidgets();
     });
@@ -118,6 +233,8 @@ function addControlButtons(container) {
         ).checked = true;
       });
 
+      updateUrlState();
+
       renderWidgets();
     });
 
@@ -134,7 +251,9 @@ function addControlButtons(container) {
         ).checked = false;
       });
 
-      renderWidgets();
+      updateUrlState();
+
+      renderWidgets()
     });
 }
 
@@ -162,6 +281,8 @@ function setupSearch() {
 
       searchQuery =
         value.trim().toLowerCase();
+
+      updateUrlState();
 
       renderWidgets();
 
