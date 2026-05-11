@@ -6,18 +6,21 @@
     {
       "title": "Bitcoin 1H",
       "symbol": "BINANCE:BTCUSDT",
+      "tvSymbolUrl": "BTCUSDT",
       "interval": "60",
       "height": 500
     },
     {
       "title": "Ethereum 4H",
       "symbol": "BINANCE:ETHUSDT",
+      "tvSymbolUrl": "BTCUSDT",
       "interval": "240",
       "height": 500
     },
     {
       "title": "Solana Daily",
       "symbol": "BINANCE:SOLUSDT",
+      "tvSymbolUrl": "BTCUSDT",
       "interval": "D",
       "height": 500
     }

@@ -33,6 +33,20 @@ async function loadDashboard() {
             class="tradingview-widget">
           </div>
 
+          <div class="tradingview-widget-copyright">
+            <a
+              href="https://www.tradingview.com/symbols/${widget.tvSymbolUrl}/"
+              rel="noopener nofollow"
+              target="_blank">
+              <span class="blue-text">
+                ${widget.symbol} chart
+              </span>
+            </a>
+            <span class="trademark">
+              by TradingView
+            </span>
+          </div>
+
         </div>
       </div>
     `;
@@ -47,31 +61,23 @@ function renderTradingViewWidget(containerId, widget) {
 
   new TradingView.widget({
     container_id: containerId,
-
     // autosize: true,
     width: "100%",
-
     symbol: widget.symbol,
-
     interval: widget.interval,
-
     timezone: 'Europe/Warsaw',
-
     theme: 'dark',
-
     style: '1',
-
     locale: 'en',
-
+    studies:["STD;SMA","STD;Momentum"],
+    interval:"D",
+    withdateranges: true,
     enable_publishing: false,
-
-    hide_top_toolbar: false,
-
+    hide_top_toolbar: false,    
+    hide_side_toolbar: false,
+    hide_side_toolbar: false,
     hide_legend: false,
-
     save_image: false,
-    // height:'500px'
-
     height: widget.height
   });
 }

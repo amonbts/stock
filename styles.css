@@ -9,3 +9,18 @@ body {
 .tradingview-widget {
   width: 100%;
 }
+
+
+.tradingview-widget-copyright {
+  margin-top: 8px;
+  font-size: 12px;
+  text-align: right;
+}
+
+.tradingview-widget-copyright a {
+  text-decoration: none;
+}
+
+.blue-text {
+  color: #2962ff;
+}
