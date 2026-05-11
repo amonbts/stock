@@ -3,36 +3,35 @@
   "description": "Crypto monitoring dashboard",
   "theme": "dark",
     "groups": [
-    "Crypto",
-    "Large Cap",
-    "Layer1",
-    "AI",
-    "Forex"
+    "BossaG",
+    "BossaE",
+    "XTB",
+    "Binnance"
   ],
   "widgets": [
     {
-      "title": "Bitcoin 1H",
-      "symbol": "BINANCE:BTCUSDT",
-      "tvSymbolUrl": "BTCUSDT",
+      "title": "ServiceNow, Inc.",
+      "symbol": "NYSE:NOW",
+      "tvSymbolUrl": "NYSE-NOW",
       "interval": "60",
       "height": 500,
-      "groups": ["Crypto", "Large Cap"]
+      "groups": ["XTB"]
     },
     {
-      "title": "Ethereum 4H",
-      "symbol": "BINANCE:ETHUSDT",
-      "tvSymbolUrl": "BTCUSDT",
-      "interval": "240",
+      "title": "Meta Platforms Inc Class A",
+      "symbol": "NASDAQ:META",
+      "tvSymbolUrl": "NASDAQ-META",
+      "interval": "60",
       "height": 500,
-       "groups": ["Crypto", "Layer1", "Large Cap"]
+       "groups": ["XTB"]
     },
     {
-      "title": "Solana Daily",
-      "symbol": "BINANCE:SOLUSDT",
-      "tvSymbolUrl": "BTCUSDT",
-      "interval": "D",
+      "title": "Tesla, Inc.",
+      "symbol": "NASDAQ:TSLA",
+      "tvSymbolUrl": "ASDAQ-TSLA",
+      "interval": "60",
       "height": 500,
-      "groups": ["Crypto", "AI"]
+      "groups": ["XTB"]
     }
   ]
 }
