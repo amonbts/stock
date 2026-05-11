@@ -14,25 +14,23 @@
 </head>
 
 <body>
-  <div class="d-flex justify-content-between align-items-center mb-4">
 
-    <div>
-      <select id="group-filter" class="form-select">
-
-        <option value="ALL">
-          All groups
-        </option>
-
-      </select>
-    </div>
-
-  </div>
   <div class="container py-4">
 
     <header class="pb-3 mb-4 border-bottom">
       <h1 id="dashboard-title"></h1>
       <p class="text-body-secondary" id="dashboard-description"></p>
     </header>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <select id="group-filter" class="form-select">
+          <option value="ALL">
+            All groups
+          </option>
+        </select>
+      </div>
+    </div>
 
     <div id="widgets-grid" class="row row-cols-1 row-cols-md-2 g-4">
     </div>
