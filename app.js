@@ -69,6 +69,7 @@ function renderTradingViewWidget(containerId, widget) {
     hide_legend: false,
 
     save_image: false,
+    // height:'500px'
 
     height: widget.height
   });

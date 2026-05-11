@@ -7,19 +7,19 @@
       "title": "Bitcoin 1H",
       "symbol": "BINANCE:BTCUSDT",
       "interval": "60",
-      "height": 500
+      "height": "500px"
     },
     {
       "title": "Ethereum 4H",
       "symbol": "BINANCE:ETHUSDT",
       "interval": "240",
-      "height": 500
+      "height": "500px"
     },
     {
       "title": "Solana Daily",
       "symbol": "BINANCE:SOLUSDT",
       "interval": "D",
-      "height": 500
+      "height": "500px"
     }
   ]
 }
