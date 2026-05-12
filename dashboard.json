@@ -1,8 +1,8 @@
 {
   "title": "Trading Dashboard",
-  "description": "Crypto monitoring dashboard",
+  "description": "Stocks monitoring dashboard",
   "theme": "dark",
-    "groups": [
+  "groups": [
     "BossaG",
     "BossaE",
     "XTB",
@@ -17,7 +17,10 @@
       "tvSymbolUrl": "NYSE-NOW",
       "interval": "60",
       "height": 500,
-      "groups": ["XTB","Stocks"]
+      "groups": [
+        "XTB",
+        "Stocks"
+      ]
     },
     {
       "title": "Meta Platforms Inc Class A",
@@ -25,7 +28,10 @@
       "tvSymbolUrl": "NASDAQ-META",
       "interval": "60",
       "height": 500,
-       "groups": ["XTB","Stocks"]
+      "groups": [
+        "XTB",
+        "Stocks"
+      ]
     },
     {
       "title": "Tesla, Inc.",
@@ -33,7 +39,10 @@
       "tvSymbolUrl": "NASDAQ-TSLA",
       "interval": "60",
       "height": 500,
-      "groups": ["XTB","Stocks"]
+      "groups": [
+        "XTB",
+        "Stocks"
+      ]
     },
     {
       "title": "Lam Research Corporation",
@@ -41,7 +50,10 @@
       "tvSymbolUrl": "NASDAQ-LRCX",
       "interval": "60",
       "height": 500,
-      "groups": ["XTB","Stocks"]
+      "groups": [
+        "XTB",
+        "Stocks"
+      ]
     },
     {
       "title": "iShares S&P 500 Information Technology Sector UCITS ETF",
@@ -49,8 +61,76 @@
       "tvSymbolUrl": "LSE-IUIT",
       "interval": "60",
       "height": 500,
-      "groups": ["XTB","ETFs"]
+      "groups": [
+        "XTB",
+        "ETFs"
+      ]
+    },
+    {
+      "title": "Ciena Corporation",
+      "symbol": "NASDAQ:CIEN",
+      "tvSymbolUrl": "NASDAQ-CIEN",
+      "interval": "60",
+      "height": 500,
+      "groups": [
+        "XTB",
+        "Stocks"
+      ]
+    },
+    {
+      "title": "Taiwan Semiconductor Manufacturing Co., Ltd. Sponsored ADR",
+      "symbol": "NYSE:TMS",
+      "tvSymbolUrl": "NYSE-TMS",
+      "interval": "60",
+      "height": 500,
+      "groups": [
+        "XTB",
+        "Stocks"
+      ]
+    },
+    {
+      "title": "Seagate Technology Holdings PLC",
+      "symbol": "NASDAQ:STX",
+      "tvSymbolUrl": "NASDAQ-STX",
+      "interval": "60",
+      "height": 500,
+      "groups": [
+        "XTB",
+        "Stocks"
+      ]
+    },
+    {
+      "title": "Micron Technology, Inc.",
+      "symbol": "NASDAQ:MU",
+      "tvSymbolUrl": "NASDAQ-MU",
+      "interval": "60",
+      "height": 500,
+      "groups": [
+        "XTB",
+        "Stocks"
+      ]
+    },
+    {
+      "title": "Intel Corporation",
+      "symbol": "NASDAQ:INTC",
+      "tvSymbolUrl": "NASDAQ-INTC",
+      "interval": "60",
+      "height": 500,
+      "groups": [
+        "XTB",
+        "Stocks"
+      ]
+    },
+    {
+      "title": "Sandisk Corporation",
+      "symbol": "NASDAQ:SNDK",
+      "tvSymbolUrl": "NASDAQ-SNDK",
+      "interval": "60",
+      "height": 500,
+      "groups": [
+        "XTB",
+        "Stocks"
+      ]
     }
-    
   ]
 }
