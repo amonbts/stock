@@ -122,54 +122,66 @@ function renderMiniChart(
 
     container.innerHTML = '';
 
-    container.style.height = '220px';
+    const wrapper =
+        document.createElement('div');
 
-    new TradingView.widget({
+    wrapper.className =
+        'tradingview-widget-container';
 
-        container_id: containerId,
+    wrapper.style.height = '220px';
+
+    wrapper.style.width = '100%';
+
+    const inner =
+        document.createElement('div');
+
+    inner.className =
+        'tradingview-widget-container__widget';
+
+    wrapper.appendChild(inner);
+
+    const script =
+        document.createElement('script');
+
+    script.type = 'text/javascript';
+
+    script.src =
+        'https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js';
+
+    script.async = true;
+
+    script.innerHTML = JSON.stringify({
+
+        symbol: widget.symbol,
 
         width: "100%",
 
         height: 220,
 
-        symbol: widget.symbol,
-
-        interval: widget.interval || "5",
-
-        timezone: "America/New_York",
-
-        theme: "dark",
-
-        style: "1",
-
         locale: "en",
 
-        hide_top_toolbar: true,
+        dateRange: "12M",
 
-        hide_legend: true,
+        colorTheme: "dark",
 
-        save_image: false,
+        trendLineColor: "#37a6ef",
 
-        enable_publishing: false,
+        underLineColor:
+            "rgba(55, 166, 239, 0.15)",
 
-        allow_symbol_change: false,
+        underLineBottomColor:
+            "rgba(55, 166, 239, 0)",
 
-        withdateranges: false,
+        isTransparent: false,
 
-        details: false,
+        autosize: true,
 
-        hotlist: false,
-
-        calendar: false,
-
-        studies: [],
-
-        overrides: {
-
-            "mainSeriesProperties.sessionId":
-                "extended"
-        }
+        largeChartUrl: ""
     });
+
+    wrapper.appendChild(script);
+
+    container.appendChild(wrapper);
 }
 
 loadMiniCharts();
