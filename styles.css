@@ -28,3 +28,7 @@ body {
 .badge {
   margin-left: 4px;
 }
+
+.mini-chart-widget {
+  min-height: 220px;
+}
