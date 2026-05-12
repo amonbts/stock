@@ -134,8 +134,8 @@
     },
     {
       "title": "ASML Holding NV",
-      "symbol": "EURONEXT:ASML",
-      "tvSymbolUrl": "EURONEXT-ASML",
+      "symbol": "GETTEX:ASME",
+      "tvSymbolUrl": "GETTEX-ASME",
       "interval": "D",
       "height": 550,
       "groups": [
