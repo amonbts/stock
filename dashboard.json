@@ -162,7 +162,8 @@
       "height": 550,
       "groups": [
         "BossaG",
-        "ETFs"
+        "ETFs",
+        "BossaE"
       ]
     },
     {
@@ -173,7 +174,8 @@
       "height": 550,
       "groups": [
         "BossaG",
-        "ETFs"
+        "ETFs",
+        "BossaE"
       ]
     },
     {
@@ -185,6 +187,39 @@
       "groups": [
         "BossaG",
         "Stocks"
+      ]
+    },
+    {
+      "title": "BETA ETF WIG40TR PORTFELOWY FUNDUSZ INWESTYCYJNY ZAMKNIETY A",
+      "symbol": "GPW:ETFBM40TR",
+      "tvSymbolUrl": "GPW-ETFBM40TR",
+      "interval": "60",
+      "height": 550,
+      "groups": [
+        "BossaE",
+        "ETFs"
+      ]
+    },
+    {
+      "title": "iShares Automation & Robotics UCITS ETF",
+      "symbol": "XETR:2B76",
+      "tvSymbolUrl": "XETR-2B76",
+      "interval": "60",
+      "height": 550,
+      "groups": [
+        "BossaE",
+        "ETFs"
+      ]
+    },
+    {
+      "title": "Hanetf ICAV - EMQQ EM Internet & Ecommerce UCITS ETF",
+      "symbol": "XETR:EMQQ",
+      "tvSymbolUrl": "XETR:EMQQ",
+      "interval": "60",
+      "height": 550,
+      "groups": [
+        "BossaE",
+        "ETFs"
       ]
     }
   ]
