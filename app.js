@@ -148,8 +148,8 @@ function buildGroupFilters() {
     const wrapper =
       document.createElement('div');
 
-    wrapper.className =
-      'form-check form-check-inline';
+    // wrapper.className = 'form-check form-check-inline';
+    wrapper.className = 'form-check-inline';
 
     wrapper.innerHTML = `
       <input

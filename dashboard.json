@@ -16,7 +16,7 @@
       "symbol": "NYSE:NOW",
       "tvSymbolUrl": "NYSE-NOW",
       "interval": "60",
-      "height": 500,
+      "height": 550,
       "groups": [
         "XTB",
         "Stocks"
@@ -27,7 +27,7 @@
       "symbol": "NASDAQ:META",
       "tvSymbolUrl": "NASDAQ-META",
       "interval": "60",
-      "height": 500,
+      "height": 550,
       "groups": [
         "XTB",
         "Stocks"
@@ -38,7 +38,7 @@
       "symbol": "NASDAQ:TSLA",
       "tvSymbolUrl": "NASDAQ-TSLA",
       "interval": "60",
-      "height": 500,
+      "height": 550,
       "groups": [
         "XTB",
         "Stocks"
@@ -49,18 +49,18 @@
       "symbol": "NASDAQ:LRCX",
       "tvSymbolUrl": "NASDAQ-LRCX",
       "interval": "60",
-      "height": 500,
+      "height": 550,
       "groups": [
         "XTB",
         "Stocks"
       ]
     },
     {
-      "title": "iShares S&P 500 Information Technology Sector UCITS ETF",
+      "title": "iShares S&P 550 Information Technology Sector UCITS ETF",
       "symbol": "LSE:IUIT",
       "tvSymbolUrl": "LSE-IUIT",
       "interval": "60",
-      "height": 500,
+      "height": 550,
       "groups": [
         "XTB",
         "ETFs"
@@ -71,7 +71,7 @@
       "symbol": "NASDAQ:CIEN",
       "tvSymbolUrl": "NASDAQ-CIEN",
       "interval": "60",
-      "height": 500,
+      "height": 550,
       "groups": [
         "XTB",
         "Stocks"
@@ -82,7 +82,7 @@
       "symbol": "NYSE:TMS",
       "tvSymbolUrl": "NYSE-TMS",
       "interval": "60",
-      "height": 500,
+      "height": 550,
       "groups": [
         "XTB",
         "Stocks"
@@ -93,7 +93,7 @@
       "symbol": "NASDAQ:STX",
       "tvSymbolUrl": "NASDAQ-STX",
       "interval": "60",
-      "height": 500,
+      "height": 550,
       "groups": [
         "XTB",
         "Stocks"
@@ -104,7 +104,7 @@
       "symbol": "NASDAQ:MU",
       "tvSymbolUrl": "NASDAQ-MU",
       "interval": "60",
-      "height": 500,
+      "height": 550,
       "groups": [
         "XTB",
         "Stocks"
@@ -115,7 +115,7 @@
       "symbol": "NASDAQ:INTC",
       "tvSymbolUrl": "NASDAQ-INTC",
       "interval": "60",
-      "height": 500,
+      "height": 550,
       "groups": [
         "XTB",
         "Stocks"
@@ -126,7 +126,7 @@
       "symbol": "NASDAQ:SNDK",
       "tvSymbolUrl": "NASDAQ-SNDK",
       "interval": "60",
-      "height": 500,
+      "height": 550,
       "groups": [
         "XTB",
         "Stocks"
@@ -137,7 +137,7 @@
       "symbol": "EURONEXT:ASML",
       "tvSymbolUrl": "EURONEXT-ASML",
       "interval": "60",
-      "height": 500,
+      "height": 550,
       "groups": [
         "BossaG",
         "Stocks"
@@ -148,7 +148,7 @@
       "symbol": "GPW:DIA",
       "tvSymbolUrl": "GPW-DIA",
       "interval": "60",
-      "height": 500,
+      "height": 550,
       "groups": [
         "BossaG",
         "Stocks"
@@ -159,18 +159,18 @@
       "symbol": "GPW:ETFAIFS",
       "tvSymbolUrl": "GPW-ETFAIFS",
       "interval": "60",
-      "height": 500,
+      "height": 550,
       "groups": [
         "BossaG",
         "ETFs"
       ]
     },
     {
-      "title": "iShares S&P 500 Information Technology Sector UCITS ETF",
+      "title": "iShares S&P 550 Information Technology Sector UCITS ETF",
       "symbol": "LSE:IUIT",
       "tvSymbolUrl": "LSE-IUIT",
       "interval": "60",
-      "height": 500,
+      "height": 550,
       "groups": [
         "BossaG",
         "ETFs"
@@ -181,7 +181,7 @@
       "symbol": "GPW:NVO",
       "tvSymbolUrl": "GPW-NVO",
       "interval": "60",
-      "height": 500,
+      "height": 550,
       "groups": [
         "BossaG",
         "Stocks"
