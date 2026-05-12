@@ -164,6 +164,28 @@
         "BossaG",
         "ETFs"
       ]
+    },
+    {
+      "title": "iShares S&P 500 Information Technology Sector UCITS ETF",
+      "symbol": "LSE:IUIT",
+      "tvSymbolUrl": "LSE-IUIT",
+      "interval": "60",
+      "height": 500,
+      "groups": [
+        "BossaG",
+        "ETFs"
+      ]
+    },
+    {
+      "title": "Novo Nordisk A/S Class B",
+      "symbol": "GPW:NVO",
+      "tvSymbolUrl": "GPW-NVO",
+      "interval": "60",
+      "height": 500,
+      "groups": [
+        "BossaG",
+        "Stocks"
+      ]
     }
   ]
 }
