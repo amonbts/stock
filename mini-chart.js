@@ -21,15 +21,21 @@ async function loadMiniCharts() {
 
         col.className = 'col';
 
+        // col.innerHTML = `
+        //     <div class="card shadow-sm h-100">
+        //         <div class="card-body p-2">
+        //             <div
+        //                 id="${widgetId}"
+        //                 class="mini-chart-widget">
+        //             </div>
+        //         </div>
+        //     </div>`;
         col.innerHTML = `
-            <div class="card shadow-sm h-100">
-                <div class="card-body p-2">
-                    <div
-                        id="${widgetId}"
-                        class="mini-chart-widget">
-                    </div>
-                </div>
-            </div>`;
+            <div
+                id="${widgetId}"
+                class="mini-chart-widget">
+            </div>
+            `;
 
         grid.appendChild(col);
 
