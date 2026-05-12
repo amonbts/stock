@@ -131,6 +131,39 @@
         "XTB",
         "Stocks"
       ]
+    },
+    {
+      "title": "ASML Holding NV",
+      "symbol": "EURONEXT:ASML",
+      "tvSymbolUrl": "EURONEXT-ASML",
+      "interval": "60",
+      "height": 500,
+      "groups": [
+        "BossaG",
+        "Stocks"
+      ]
+    },
+    {
+      "title": "Diagnostyka S.A.",
+      "symbol": "GPW:DIA",
+      "tvSymbolUrl": "GPW-DIA",
+      "interval": "60",
+      "height": 500,
+      "groups": [
+        "BossaG",
+        "Stocks"
+      ]
+    },
+    {
+      "title": "iShares AI Infrastructure UCITS ETF Accum USD",
+      "symbol": "GPW:ETFAIFS",
+      "tvSymbolUrl": "GPW-ETFAIFS",
+      "interval": "60",
+      "height": 500,
+      "groups": [
+        "BossaG",
+        "Stocks"
+      ]
     }
   ]
 }

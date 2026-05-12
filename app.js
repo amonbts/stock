@@ -493,7 +493,7 @@ function renderTradingViewWidget(containerId, widget) {
 
     locale: 'en',
     studies: ["STD;SMA", "STD;Momentum"],
-    interval: "D",
+    // interval: "D",
     withdateranges: true,
 
     enable_publishing: false,
