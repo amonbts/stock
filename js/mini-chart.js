@@ -6,12 +6,52 @@ async function loadMiniCharts() {
     const config =
         await response.json();
 
+    await loadFilters(config);
+
+    renderWidgets(config);
+}
+
+function renderWidgets(config) {
+
     const grid =
         document.getElementById(
             'mini-chart-grid'
         );
 
-    config.widgets.forEach((widget, index) => {
+    grid.innerHTML = '';
+
+    const widgets =
+        filterWidgets(
+            config.widgets
+        );
+
+    //
+    // EMPTY STATE
+    //
+
+    if (widgets.length === 0) {
+
+        grid.innerHTML = `
+
+      <div class="col-12">
+
+        <div class="alert alert-secondary">
+
+          No widgets found.
+
+        </div>
+
+      </div>
+    `;
+
+        return;
+    }
+
+    //
+    // RENDER MINI CHARTS
+    //
+
+    widgets.forEach((widget, index) => {
 
         const widgetId =
             `mini-chart-${index}`;
@@ -21,21 +61,21 @@ async function loadMiniCharts() {
 
         col.className = 'col';
 
-        // col.innerHTML = `
-        //     <div class="card shadow-sm h-100">
-        //         <div class="card-body p-2">
-        //             <div
-        //                 id="${widgetId}"
-        //                 class="mini-chart-widget">
-        //             </div>
-        //         </div>
-        //     </div>`;
         col.innerHTML = `
-            <div
-                id="${widgetId}"
-                class="mini-chart-widget">
-            </div>
-            `;
+
+      <div class="card shadow-sm h-100">
+
+        <div class="card-body p-1">
+
+          <div
+            id="${widgetId}"
+            class="mini-chart-widget">
+          </div>
+
+        </div>
+
+      </div>
+    `;
 
         grid.appendChild(col);
 
@@ -91,66 +131,54 @@ function renderMiniChart(
 
     container.innerHTML = '';
 
-    const wrapper =
-        document.createElement('div');
+    container.style.height = '220px';
 
-    wrapper.className =
-        'tradingview-widget-container';
+    new TradingView.widget({
 
-    wrapper.style.height = '220px';
-
-    wrapper.style.width = '100%';
-
-    const inner =
-        document.createElement('div');
-
-    inner.className =
-        'tradingview-widget-container__widget';
-
-    wrapper.appendChild(inner);
-
-    const script =
-        document.createElement('script');
-
-    script.type = 'text/javascript';
-
-    script.src =
-        'https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js';
-
-    script.async = true;
-
-    script.innerHTML = JSON.stringify({
-
-        symbol: widget.symbol,
+        container_id: containerId,
 
         width: "100%",
 
         height: 220,
 
+        symbol: widget.symbol,
+
+        interval: widget.interval || "5",
+
+        timezone: "America/New_York",
+
+        theme: "dark",
+
+        style: "1",
+
         locale: "en",
 
-        dateRange: "12M",
+        hide_top_toolbar: true,
 
-        colorTheme: "dark",
+        hide_legend: true,
 
-        trendLineColor: "#37a6ef",
+        save_image: false,
 
-        underLineColor:
-            "rgba(55, 166, 239, 0.15)",
+        enable_publishing: false,
 
-        underLineBottomColor:
-            "rgba(55, 166, 239, 0)",
+        allow_symbol_change: false,
 
-        isTransparent: false,
+        withdateranges: false,
 
-        autosize: true,
+        details: false,
 
-        largeChartUrl: ""
+        hotlist: false,
+
+        calendar: false,
+
+        studies: [],
+
+        overrides: {
+
+            "mainSeriesProperties.sessionId":
+                "extended"
+        }
     });
-
-    wrapper.appendChild(script);
-
-    container.appendChild(wrapper);
 }
 
 loadMiniCharts();

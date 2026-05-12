@@ -20,11 +20,7 @@ async function loadDashboard() {
 
   loadStateFromUrl();
 
-  buildGroupFilters();
-
-  setupSearch();
-
-  syncUiWithState();
+  await loadFilters(dashboardConfig);
 
   renderWidgets();
 }
@@ -101,93 +97,6 @@ function loadStateFromUrl() {
     searchQuery =
       search.toLowerCase();
   }
-}
-
-function syncUiWithState() {
-
-  //
-  // CHECKBOXES
-  //
-
-  selectedGroups.forEach(group => {
-
-    const checkbox =
-      document.getElementById(
-        `group-${group}`
-      );
-
-    if (checkbox) {
-
-      checkbox.checked = true;
-    }
-  });
-
-  //
-  // SEARCH INPUT
-  //
-
-  const searchInput =
-    document.getElementById(
-      'search-input'
-    );
-
-  if (searchInput) {
-
-    searchInput.value =
-      searchQuery;
-  }
-}
-
-function buildGroupFilters() {
-
-  const container =
-    document.getElementById('group-filters');
-
-  dashboardConfig.groups.forEach(group => {
-
-    const wrapper = document.createElement('div');
-
-    // wrapper.className = 'form-check form-check-inline';
-    wrapper.className = '';
-
-    wrapper.innerHTML = `
-      <input
-        class="btn-check"
-        type="checkbox"
-        id="group-${group}"
-        value="${group}"
-        autocomplete="off">
-
-      <label
-        class="btn btn-outline-primary"
-        for="group-${group}">
-        ${group}
-      </label>
-    `;
-
-    container.appendChild(wrapper);
-
-    const checkbox =
-      wrapper.querySelector('input');
-
-    checkbox.addEventListener('change', () => {
-
-      if (checkbox.checked) {
-
-        selectedGroups.add(group);
-
-      } else {
-
-        selectedGroups.delete(group);
-      }
-
-      updateUrlState();
-
-      renderWidgets();
-    });
-  });
-
-  addControlButtons(container);
 }
 
 function addControlButtons(container) {
@@ -270,28 +179,6 @@ function debounce(fn, delay) {
   };
 }
 
-function setupSearch() {
-
-  const input =
-    document.getElementById('search-input');
-
-  const debouncedSearch =
-    debounce((value) => {
-
-      searchQuery =
-        value.trim().toLowerCase();
-
-      updateUrlState();
-
-      renderWidgets();
-
-    }, 200);
-
-  input.addEventListener('input', (e) => {
-
-    debouncedSearch(e.target.value);
-  });
-}
 
 function renderWidgets() {
 
@@ -301,7 +188,9 @@ function renderWidgets() {
   grid.innerHTML = '';
 
   let widgets =
-    dashboardConfig.widgets;
+    filterWidgets(
+      dashboardConfig.widgets
+    );
 
   //
   // GROUP FILTER
