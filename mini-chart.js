@@ -22,60 +22,14 @@ async function loadMiniCharts() {
         col.className = 'col';
 
         col.innerHTML = `
-
-      <div class="card shadow-sm h-100">
-
-        <div class="card-body">
-
-          <div
-            class="d-flex justify-content-between align-items-center mb-3">
-
-            <div>
-
-              <h6 class="card-title mb-1">
-                ${widget.title}
-              </h6>
-
-              <small class="text-body-secondary">
-                ${widget.symbol}
-              </small>
-
-            </div>
-
-            <span class="badge text-bg-secondary">
-              ${widget.interval}
-            </span>
-
-          </div>
-
-          <div
-            id="${widgetId}"
-            class="mini-chart-widget">
-          </div>
-
-          <div class="tradingview-widget-copyright mt-2">
-
-            <a
-              href="https://www.tradingview.com/symbols/${widget.symbol.replace(':', '-')}/"
-              rel="noopener nofollow"
-              target="_blank">
-
-              <span class="blue-text">
-                ${widget.symbol}
-              </span>
-
-            </a>
-
-            <span class="trademark">
-              by TradingView
-            </span>
-
-          </div>
-
-        </div>
-
-      </div>
-    `;
+            <div class="card shadow-sm h-100">
+                <div class="card-body p-2">
+                    <div
+                        id="${widgetId}"
+                        class="mini-chart-widget">
+                    </div>
+                </div>
+            </div>`;
 
         grid.appendChild(col);
 
