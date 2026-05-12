@@ -15,7 +15,7 @@
       "title": "ServiceNow, Inc.",
       "symbol": "NYSE:NOW",
       "tvSymbolUrl": "NYSE-NOW",
-      "interval": "60",
+      "interval": "D",
       "height": 550,
       "groups": [
         "XTB",
@@ -26,7 +26,7 @@
       "title": "Meta Platforms Inc Class A",
       "symbol": "NASDAQ:META",
       "tvSymbolUrl": "NASDAQ-META",
-      "interval": "60",
+      "interval": "D",
       "height": 550,
       "groups": [
         "XTB",
@@ -37,7 +37,7 @@
       "title": "Tesla, Inc.",
       "symbol": "NASDAQ:TSLA",
       "tvSymbolUrl": "NASDAQ-TSLA",
-      "interval": "60",
+      "interval": "D",
       "height": 550,
       "groups": [
         "XTB",
@@ -48,7 +48,7 @@
       "title": "Lam Research Corporation",
       "symbol": "NASDAQ:LRCX",
       "tvSymbolUrl": "NASDAQ-LRCX",
-      "interval": "60",
+      "interval": "D",
       "height": 550,
       "groups": [
         "XTB",
@@ -59,7 +59,7 @@
       "title": "iShares S&P 550 Information Technology Sector UCITS ETF",
       "symbol": "LSE:IUIT",
       "tvSymbolUrl": "LSE-IUIT",
-      "interval": "60",
+      "interval": "D",
       "height": 550,
       "groups": [
         "XTB",
@@ -70,7 +70,7 @@
       "title": "Ciena Corporation",
       "symbol": "NASDAQ:CIEN",
       "tvSymbolUrl": "NASDAQ-CIEN",
-      "interval": "60",
+      "interval": "D",
       "height": 550,
       "groups": [
         "XTB",
@@ -81,7 +81,7 @@
       "title": "Taiwan Semiconductor Manufacturing Co., Ltd. Sponsored ADR",
       "symbol": "NYSE:TMS",
       "tvSymbolUrl": "NYSE-TMS",
-      "interval": "60",
+      "interval": "D",
       "height": 550,
       "groups": [
         "XTB",
@@ -92,7 +92,7 @@
       "title": "Seagate Technology Holdings PLC",
       "symbol": "NASDAQ:STX",
       "tvSymbolUrl": "NASDAQ-STX",
-      "interval": "60",
+      "interval": "D",
       "height": 550,
       "groups": [
         "XTB",
@@ -103,7 +103,7 @@
       "title": "Micron Technology, Inc.",
       "symbol": "NASDAQ:MU",
       "tvSymbolUrl": "NASDAQ-MU",
-      "interval": "60",
+      "interval": "D",
       "height": 550,
       "groups": [
         "XTB",
@@ -114,7 +114,7 @@
       "title": "Intel Corporation",
       "symbol": "NASDAQ:INTC",
       "tvSymbolUrl": "NASDAQ-INTC",
-      "interval": "60",
+      "interval": "D",
       "height": 550,
       "groups": [
         "XTB",
@@ -125,7 +125,7 @@
       "title": "Sandisk Corporation",
       "symbol": "NASDAQ:SNDK",
       "tvSymbolUrl": "NASDAQ-SNDK",
-      "interval": "60",
+      "interval": "D",
       "height": 550,
       "groups": [
         "XTB",
@@ -136,7 +136,7 @@
       "title": "ASML Holding NV",
       "symbol": "EURONEXT:ASML",
       "tvSymbolUrl": "EURONEXT-ASML",
-      "interval": "60",
+      "interval": "D",
       "height": 550,
       "groups": [
         "BossaG",
@@ -147,7 +147,7 @@
       "title": "Diagnostyka S.A.",
       "symbol": "GPW:DIA",
       "tvSymbolUrl": "GPW-DIA",
-      "interval": "60",
+      "interval": "D",
       "height": 550,
       "groups": [
         "BossaG",
@@ -158,7 +158,7 @@
       "title": "iShares AI Infrastructure UCITS ETF Accum USD",
       "symbol": "GPW:ETFAIFS",
       "tvSymbolUrl": "GPW-ETFAIFS",
-      "interval": "60",
+      "interval": "D",
       "height": 550,
       "groups": [
         "BossaG",
@@ -170,7 +170,7 @@
       "title": "iShares S&P 550 Information Technology Sector UCITS ETF",
       "symbol": "LSE:IUIT",
       "tvSymbolUrl": "LSE-IUIT",
-      "interval": "60",
+      "interval": "D",
       "height": 550,
       "groups": [
         "BossaG",
@@ -182,7 +182,7 @@
       "title": "Novo Nordisk A/S Class B",
       "symbol": "GPW:NVO",
       "tvSymbolUrl": "GPW-NVO",
-      "interval": "60",
+      "interval": "D",
       "height": 550,
       "groups": [
         "BossaG",
@@ -193,7 +193,7 @@
       "title": "BETA ETF WIG40TR PORTFELOWY FUNDUSZ INWESTYCYJNY ZAMKNIETY A",
       "symbol": "GPW:ETFBM40TR",
       "tvSymbolUrl": "GPW-ETFBM40TR",
-      "interval": "60",
+      "interval": "D",
       "height": 550,
       "groups": [
         "BossaE",
@@ -204,7 +204,7 @@
       "title": "iShares Automation & Robotics UCITS ETF",
       "symbol": "XETR:2B76",
       "tvSymbolUrl": "XETR-2B76",
-      "interval": "60",
+      "interval": "D",
       "height": 550,
       "groups": [
         "BossaE",
@@ -215,7 +215,7 @@
       "title": "Hanetf ICAV - EMQQ EM Internet & Ecommerce UCITS ETF",
       "symbol": "XETR:EMQQ",
       "tvSymbolUrl": "XETR:EMQQ",
-      "interval": "60",
+      "interval": "D",
       "height": 550,
       "groups": [
         "BossaE",
