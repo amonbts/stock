@@ -145,11 +145,10 @@ function buildGroupFilters() {
 
   dashboardConfig.groups.forEach(group => {
 
-    const wrapper =
-      document.createElement('div');
+    const wrapper = document.createElement('div');
 
     // wrapper.className = 'form-check form-check-inline';
-    wrapper.className = 'form-check-inline';
+    wrapper.className = '';
 
     wrapper.innerHTML = `
       <input
