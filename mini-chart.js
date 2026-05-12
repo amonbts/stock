@@ -1,27 +1,27 @@
 async function loadMiniCharts() {
 
-  const response =
-    await fetch('./dashboard.json');
+    const response =
+        await fetch('./dashboard.json');
 
-  const config =
-    await response.json();
+    const config =
+        await response.json();
 
-  const grid =
-    document.getElementById(
-      'mini-chart-grid'
-    );
+    const grid =
+        document.getElementById(
+            'mini-chart-grid'
+        );
 
-  config.widgets.forEach((widget, index) => {
+    config.widgets.forEach((widget, index) => {
 
-    const widgetId =
-      `mini-chart-${index}`;
+        const widgetId =
+            `mini-chart-${index}`;
 
-    const col =
-      document.createElement('div');
+        const col =
+            document.createElement('div');
 
-    col.className = 'col';
+        col.className = 'col';
 
-    col.innerHTML = `
+        col.innerHTML = `
 
       <div class="card shadow-sm h-100">
 
@@ -77,81 +77,120 @@ async function loadMiniCharts() {
       </div>
     `;
 
-    grid.appendChild(col);
+        grid.appendChild(col);
 
-    setupLazyMiniChart(
-      widgetId,
-      widget
-    );
-  });
+        setupLazyMiniChart(
+            widgetId,
+            widget
+        );
+    });
 }
 
 function setupLazyMiniChart(
-  containerId,
-  widget
+    containerId,
+    widget
 ) {
 
-  const container =
-    document.getElementById(
-      containerId
-    );
+    const container =
+        document.getElementById(
+            containerId
+        );
 
-  const observer =
-    new IntersectionObserver(entries => {
+    const observer =
+        new IntersectionObserver(entries => {
 
-      entries.forEach(entry => {
+            entries.forEach(entry => {
 
-        if (entry.isIntersecting) {
+                if (entry.isIntersecting) {
 
-          renderMiniChart(
-            containerId,
-            widget
-          );
+                    renderMiniChart(
+                        containerId,
+                        widget
+                    );
 
-          observer.unobserve(container);
-        }
-      });
+                    observer.unobserve(container);
+                }
+            });
 
-    }, {
-      rootMargin: '300px'
-    });
+        }, {
+            rootMargin: '300px'
+        });
 
-  observer.observe(container);
+    observer.observe(container);
 }
 
 function renderMiniChart(
-  containerId,
-  widget
+    containerId,
+    widget
 ) {
 
-  new TradingView.MiniWidget({
+    const container =
+        document.getElementById(
+            containerId
+        );
 
-    container_id: containerId,
+    container.innerHTML = '';
 
-    symbol: widget.symbol,
+    const wrapper =
+        document.createElement('div');
 
-    width: "100%",
+    wrapper.className =
+        'tradingview-widget-container';
 
-    height: 220,
+    wrapper.style.height = '220px';
 
-    locale: "en",
+    wrapper.style.width = '100%';
 
-    dateRange: "12M",
+    const inner =
+        document.createElement('div');
 
-    colorTheme: "dark",
+    inner.className =
+        'tradingview-widget-container__widget';
 
-    trendLineColor: "#37a6ef",
+    wrapper.appendChild(inner);
 
-    underLineColor: "rgba(55, 166, 239, 0.15)",
+    const script =
+        document.createElement('script');
 
-    underLineBottomColor: "rgba(55, 166, 239, 0)",
+    script.type = 'text/javascript';
 
-    isTransparent: false,
+    script.src =
+        'https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js';
 
-    autosize: true,
+    script.async = true;
 
-    largeChartUrl: ""
-  });
+    script.innerHTML = JSON.stringify({
+
+        symbol: widget.symbol,
+
+        width: "100%",
+
+        height: 220,
+
+        locale: "en",
+
+        dateRange: "12M",
+
+        colorTheme: "dark",
+
+        trendLineColor: "#37a6ef",
+
+        underLineColor:
+            "rgba(55, 166, 239, 0.15)",
+
+        underLineBottomColor:
+            "rgba(55, 166, 239, 0)",
+
+        isTransparent: false,
+
+        autosize: true,
+
+        largeChartUrl: ""
+    });
+
+    wrapper.appendChild(script);
+
+    container.appendChild(wrapper);
 }
 
 loadMiniCharts();
