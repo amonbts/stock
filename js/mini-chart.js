@@ -163,7 +163,8 @@ function renderMiniChart(
 
             width: "100%",
 
-            height: 220,
+            // height: 220,
+            height: 150,
 
             locale: "en",
 
