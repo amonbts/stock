@@ -169,7 +169,7 @@ function renderMiniChart(
             locale: "en",
 
             // dateRange: "12M",
-            dateRange: "6M",
+            dateRange: "1W",
 
             colorTheme: "dark",
 
