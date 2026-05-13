@@ -1,17 +1,23 @@
+let miniChartConfig = null;
+
 async function loadMiniCharts() {
+
+    await waitForTradingView();
 
     const response =
         await fetch('./dashboard.json');
 
-    const config =
+    miniChartConfig =
         await response.json();
 
-    await loadFilters(config);
+    await loadFilters(
+        miniChartConfig
+    );
 
-    renderWidgets(config);
+    renderWidgets();
 }
 
-function renderWidgets(config) {
+function renderWidgets() {
 
     const grid =
         document.getElementById(
@@ -22,7 +28,7 @@ function renderWidgets(config) {
 
     const widgets =
         filterWidgets(
-            config.widgets
+            miniChartConfig.widgets
         );
 
     //
@@ -62,11 +68,20 @@ function renderWidgets(config) {
         col.className = 'col';
 
         col.innerHTML = `
-            <div
-                id="${widgetId}"
-                class="mini-chart-widget">
-            </div>
-            `;
+
+      <div class="card shadow-sm h-100">
+
+        <div class="card-body p-1">
+
+          <div
+            id="${widgetId}"
+            class="mini-chart-widget">
+          </div>
+
+        </div>
+
+      </div>
+    `;
 
         grid.appendChild(col);
 
@@ -115,6 +130,15 @@ function renderMiniChart(
     widget
 ) {
 
+    if (!window.TradingView) {
+
+        console.error(
+            'TradingView library not loaded'
+        );
+
+        return;
+    }
+
     const container =
         document.getElementById(
             containerId
@@ -122,66 +146,80 @@ function renderMiniChart(
 
     container.innerHTML = '';
 
-    const wrapper =
-        document.createElement('div');
+    container.style.height =
+        '220px';
 
-    wrapper.className =
-        'tradingview-widget-container';
+    new TradingView.widget({
 
-    wrapper.style.height = '220px';
-
-    wrapper.style.width = '100%';
-
-    const inner =
-        document.createElement('div');
-
-    inner.className =
-        'tradingview-widget-container__widget';
-
-    wrapper.appendChild(inner);
-
-    const script =
-        document.createElement('script');
-
-    script.type = 'text/javascript';
-
-    script.src =
-        'https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js';
-
-    script.async = true;
-
-    script.innerHTML = JSON.stringify({
-
-        symbol: widget.symbol,
+        container_id: containerId,
 
         width: "100%",
 
         height: 220,
 
+        symbol: widget.symbol,
+
+        interval: widget.interval || "5",
+
+        timezone: "America/New_York",
+
+        theme: "dark",
+
+        style: "1",
+
         locale: "en",
 
-        dateRange: "12M",
+        hide_top_toolbar: true,
 
-        colorTheme: "dark",
+        hide_legend: true,
 
-        trendLineColor: "#37a6ef",
+        save_image: false,
 
-        underLineColor:
-            "rgba(55, 166, 239, 0.15)",
+        enable_publishing: false,
 
-        underLineBottomColor:
-            "rgba(55, 166, 239, 0)",
+        allow_symbol_change: false,
 
-        isTransparent: false,
+        withdateranges: false,
 
-        autosize: true,
+        details: false,
 
-        largeChartUrl: ""
+        hotlist: false,
+
+        calendar: false,
+
+        studies: [],
+
+        overrides: {
+
+            "mainSeriesProperties.sessionId":
+                "extended"
+        }
     });
+}
 
-    wrapper.appendChild(script);
+function waitForTradingView() {
 
-    container.appendChild(wrapper);
+    return new Promise(resolve => {
+
+        if (window.TradingView) {
+
+            resolve();
+
+            return;
+        }
+
+        const interval =
+            setInterval(() => {
+
+                if (window.TradingView) {
+
+                    clearInterval(interval);
+
+                    resolve();
+                }
+
+            }, 50);
+    });
 }
 
 loadMiniCharts();
