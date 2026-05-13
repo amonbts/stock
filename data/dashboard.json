@@ -160,6 +160,24 @@
         "BossaE",
         "ETFs"
       ]
+    },
+    {
+      "symbol": "BINANCE:BTCUSDC",
+      "groups": [
+        "Binnance"
+      ]
+    },
+    {
+      "symbol": "BINANCE:ETHUSDC",
+      "groups": [
+        "Binnance"
+      ]
+    },
+    {
+      "symbol": "BINANCE:BNBUSDC",
+      "groups": [
+        "Binnance"
+      ]
     }
   ]
 }
