@@ -1,10 +1,8 @@
 let dashboardConfig = null;
 
-let selectedGroups = new Set();
-
-let searchQuery = '';
-
 async function loadDashboard() {
+
+  await waitForTradingView();
 
   const response =
     await fetch('./dashboard.json');
@@ -18,167 +16,10 @@ async function loadDashboard() {
   document.getElementById('dashboard-description').innerText =
     dashboardConfig.description;
 
-  loadStateFromUrl();
-
   await loadFilters(dashboardConfig);
 
   renderWidgets();
 }
-
-function updateUrlState() {
-
-  const params =
-    new URLSearchParams();
-
-  if (selectedGroups.size > 0) {
-
-    params.set(
-      'groups',
-      [...selectedGroups].join(',')
-    );
-  }
-
-  if (searchQuery.length > 0) {
-
-    params.set(
-      'search',
-      searchQuery
-    );
-  }
-
-  const queryString =
-    params.toString();
-
-  const newUrl =
-    queryString.length > 0
-      ? `${window.location.pathname}?${queryString}`
-      : window.location.pathname;
-
-  window.history.replaceState(
-    {},
-    '',
-    newUrl
-  );
-}
-
-function loadStateFromUrl() {
-
-  const params =
-    new URLSearchParams(
-      window.location.search
-    );
-
-  //
-  // GROUPS
-  //
-
-  const groups =
-    params.get('groups');
-
-  if (groups) {
-
-    groups
-      .split(',')
-      .forEach(group => {
-
-        selectedGroups.add(group);
-      });
-  }
-
-  //
-  // SEARCH
-  //
-
-  const search =
-    params.get('search');
-
-  if (search) {
-
-    searchQuery =
-      search.toLowerCase();
-  }
-}
-
-function addControlButtons(container) {
-
-  const controls =
-    document.createElement('div');
-
-  controls.className =
-    'ms-3 d-inline-flex gap-2';
-
-  controls.innerHTML = `
-
-    <button
-      class="btn btn-sm btn-secondary"
-      id="select-all-btn">
-
-      Select all
-
-    </button>
-
-    <button
-      class="btn btn-sm btn-outline-secondary"
-      id="clear-all-btn">
-
-      Clear
-
-    </button>
-  `;
-
-  container.appendChild(controls);
-
-  document
-    .getElementById('select-all-btn')
-    .addEventListener('click', () => {
-
-      dashboardConfig.groups.forEach(group => {
-
-        selectedGroups.add(group);
-
-        document.getElementById(
-          `group-${group}`
-        ).checked = true;
-      });
-
-      updateUrlState();
-
-      renderWidgets();
-    });
-
-  document
-    .getElementById('clear-all-btn')
-    .addEventListener('click', () => {
-
-      selectedGroups.clear();
-
-      dashboardConfig.groups.forEach(group => {
-
-        document.getElementById(
-          `group-${group}`
-        ).checked = false;
-      });
-
-      updateUrlState();
-
-      renderWidgets()
-    });
-}
-
-function debounce(fn, delay) {
-
-  let timeout;
-
-  return (...args) => {
-
-    clearTimeout(timeout);
-
-    timeout = setTimeout(() => {
-      fn(...args);
-    }, delay);
-  };
-}
-
 
 function renderWidgets() {
 
@@ -187,50 +28,10 @@ function renderWidgets() {
 
   grid.innerHTML = '';
 
-  let widgets =
+  const widgets =
     filterWidgets(
       dashboardConfig.widgets
     );
-
-  //
-  // GROUP FILTER
-  //
-
-  if (selectedGroups.size > 0) {
-
-    widgets = widgets.filter(widget => {
-
-      return widget.groups.some(group =>
-        selectedGroups.has(group)
-      );
-    });
-  }
-
-  //
-  // SEARCH FILTER
-  //
-
-  if (searchQuery.length > 0) {
-
-    widgets = widgets.filter(widget => {
-
-      const searchableText = [
-
-        widget.title,
-
-        widget.symbol,
-
-        ...(widget.groups || [])
-
-      ]
-        .join(' ')
-        .toLowerCase();
-
-      return searchableText.includes(
-        searchQuery
-      );
-    });
-  }
 
   //
   // EMPTY STATE
@@ -301,7 +102,7 @@ function renderWidgets() {
           <div class="tradingview-widget-copyright">
 
             <a
-              href="https://www.tradingview.com/symbols/${widget.tvSymbolUrl}/"
+              href="https://www.tradingview.com/symbols/${widget.symbol.replace(':', '-')}/"
               rel="noopener nofollow"
               target="_blank">
 
@@ -324,14 +125,22 @@ function renderWidgets() {
 
     grid.appendChild(col);
 
-    setupLazyWidget(widgetId, widget);
+    setupLazyWidget(
+      widgetId,
+      widget
+    );
   });
 }
 
-function setupLazyWidget(containerId, widget) {
+function setupLazyWidget(
+  containerId,
+  widget
+) {
 
   const container =
-    document.getElementById(containerId);
+    document.getElementById(
+      containerId
+    );
 
   container.style.height =
     `${widget.height}px`;
@@ -359,7 +168,19 @@ function setupLazyWidget(containerId, widget) {
   observer.observe(container);
 }
 
-function renderTradingViewWidget(containerId, widget) {
+function renderTradingViewWidget(
+  containerId,
+  widget
+) {
+
+  if (!window.TradingView) {
+
+    console.error(
+      'TradingView library not loaded'
+    );
+
+    return;
+  }
 
   new TradingView.widget({
 
@@ -385,13 +206,53 @@ function renderTradingViewWidget(containerId, widget) {
     withdateranges: true,
 
     enable_publishing: false,
+    allow_symbol_change: false,
 
     hide_top_toolbar: false,
     hide_side_toolbar: false,
     hide_side_toolbar: false,
     hide_legend: false,
 
-    save_image: false
+    save_image: false,
+
+    studies: [],
+
+    details: false,
+
+    hotlist: false,
+
+    calendar: false,
+
+    overrides: {
+
+      "mainSeriesProperties.sessionId":
+        "extended"
+    }
+  });
+}
+
+function waitForTradingView() {
+
+  return new Promise(resolve => {
+
+    if (window.TradingView) {
+
+      resolve();
+
+      return;
+    }
+
+    const interval =
+      setInterval(() => {
+
+        if (window.TradingView) {
+
+          clearInterval(interval);
+
+          resolve();
+        }
+
+      }, 50);
   });
 }
 
