@@ -156,6 +156,17 @@
       ]
     },
     {
+      "title": "Amazon.com, Inc.",
+      "symbol": "NASDAQ:AMZN",
+      "tvSymbolUrl": "NASDAQ:AMZN",
+      "interval": "D",
+      "height": 550,
+      "groups": [
+        "XTB",
+        "Stocks"
+      ]
+    },
+    {
       "title": "ASML Holding NV",
       "symbol": "GETTEX:ASME",
       "tvSymbolUrl": "GETTEX-ASME",
