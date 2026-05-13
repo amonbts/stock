@@ -145,6 +145,17 @@
       ]
     },
     {
+      "title": "Western Digital Corporation",
+      "symbol": "NASDAQ:WDC",
+      "tvSymbolUrl": "NASDAQ:WDC",
+      "interval": "D",
+      "height": 550,
+      "groups": [
+        "XTB",
+        "Stocks"
+      ]
+    },
+    {
       "title": "ASML Holding NV",
       "symbol": "GETTEX:ASME",
       "tvSymbolUrl": "GETTEX-ASME",
