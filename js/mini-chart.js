@@ -173,9 +173,10 @@ function renderMiniChart(
 
             isTransparent: false,
 
-            autosize: true,
+            autosize: true
+            // ,
 
-            largeChartUrl: "./index.html"
+            // largeChartUrl: "./index.html"
         });
 
     wrapper.appendChild(script);
