@@ -2,42 +2,40 @@ let miniChartConfig = null;
 
 async function loadMiniCharts() {
 
-    await waitForTradingView();
+  const response =
+    await fetch('./dashboard.json');
 
-    const response =
-        await fetch('./dashboard.json');
+  miniChartConfig =
+    await response.json();
 
-    miniChartConfig =
-        await response.json();
+  await loadFilters(
+    miniChartConfig
+  );
 
-    await loadFilters(
-        miniChartConfig
-    );
-
-    renderWidgets();
+  renderWidgets();
 }
 
 function renderWidgets() {
 
-    const grid =
-        document.getElementById(
-            'mini-chart-grid'
-        );
+  const grid =
+    document.getElementById(
+      'mini-chart-grid'
+    );
 
-    grid.innerHTML = '';
+  grid.innerHTML = '';
 
-    const widgets =
-        filterWidgets(
-            miniChartConfig.widgets
-        );
+  const widgets =
+    filterWidgets(
+      miniChartConfig.widgets
+    );
 
-    //
-    // EMPTY STATE
-    //
+  //
+  // EMPTY STATE
+  //
 
-    if (widgets.length === 0) {
+  if (widgets.length === 0) {
 
-        grid.innerHTML = `
+    grid.innerHTML = `
 
       <div class="col-12">
 
@@ -50,24 +48,24 @@ function renderWidgets() {
       </div>
     `;
 
-        return;
-    }
+    return;
+  }
 
-    //
-    // RENDER MINI CHARTS
-    //
+  //
+  // RENDER MINI CHARTS
+  //
 
-    widgets.forEach((widget, index) => {
+  widgets.forEach((widget, index) => {
 
-        const widgetId =
-            `mini-chart-${index}`;
+    const widgetId =
+      `mini-chart-${index}`;
 
-        const col =
-            document.createElement('div');
+    const col =
+      document.createElement('div');
 
-        col.className = 'col';
+    col.className = 'col';
 
-        col.innerHTML = `
+    col.innerHTML = `
 
       <div class="card shadow-sm h-100">
 
@@ -83,143 +81,116 @@ function renderWidgets() {
       </div>
     `;
 
-        grid.appendChild(col);
+    grid.appendChild(col);
 
-        setupLazyMiniChart(
-            widgetId,
-            widget
-        );
-    });
+    setupLazyMiniChart(
+      widgetId,
+      widget
+    );
+  });
 }
 
 function setupLazyMiniChart(
-    containerId,
-    widget
+  containerId,
+  widget
 ) {
 
-    const container =
-        document.getElementById(
-            containerId
-        );
+  const container =
+    document.getElementById(
+      containerId
+    );
 
-    const observer =
-        new IntersectionObserver(entries => {
+  const observer =
+    new IntersectionObserver(entries => {
 
-            entries.forEach(entry => {
+      entries.forEach(entry => {
 
-                if (entry.isIntersecting) {
+        if (entry.isIntersecting) {
 
-                    renderMiniChart(
-                        containerId,
-                        widget
-                    );
+          renderMiniChart(
+            containerId,
+            widget
+          );
 
-                    observer.unobserve(container);
-                }
-            });
+          observer.unobserve(container);
+        }
+      });
 
-        }, {
-            rootMargin: '300px'
-        });
+    }, {
+      rootMargin: '300px'
+    });
 
-    observer.observe(container);
+  observer.observe(container);
 }
 
 function renderMiniChart(
-    containerId,
-    widget
+  containerId,
+  widget
 ) {
 
-    if (!window.TradingView) {
+  const container =
+    document.getElementById(
+      containerId
+    );
 
-        console.error(
-            'TradingView library not loaded'
-        );
+  container.innerHTML = '';
 
-        return;
-    }
+  const wrapper =
+    document.createElement('div');
 
-    const container =
-        document.getElementById(
-            containerId
-        );
+  wrapper.className =
+    'tradingview-widget-container';
 
-    container.innerHTML = '';
+  wrapper.style.height =
+    '220px';
 
-    container.style.height =
-        '220px';
+  wrapper.style.width =
+    '100%';
 
-    new TradingView.widget({
+  const inner =
+    document.createElement('div');
 
-        container_id: containerId,
+  inner.className =
+    'tradingview-widget-container__widget';
 
-        width: "100%",
+  wrapper.appendChild(inner);
 
-        height: 220,
+  const script =
+    document.createElement('script');
 
-        symbol: widget.symbol,
+  script.type =
+    'text/javascript';
 
-        interval: widget.interval || "5",
+  script.src =
+    'https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js';
 
-        timezone: "America/New_York",
+  script.async = true;
 
-        theme: "dark",
+  script.innerHTML =
+    JSON.stringify({
 
-        style: "1",
+      symbol: widget.symbol,
 
-        locale: "en",
+      width: "100%",
 
-        hide_top_toolbar: true,
+      height: 220,
 
-        hide_legend: true,
+      locale: "en",
 
-        save_image: false,
+      dateRange: "12M",
 
-        enable_publishing: false,
+      colorTheme: "dark",
 
-        allow_symbol_change: false,
+      isTransparent: false,
 
-        withdateranges: false,
+      autosize: true,
 
-        details: false,
-
-        hotlist: false,
-
-        calendar: false,
-
-        studies: [],
-
-        overrides: {
-
-            "mainSeriesProperties.sessionId":
-                "extended"
-        }
+      largeChartUrl: "./index.html"
     });
-}
 
-function waitForTradingView() {
+  wrapper.appendChild(script);
 
-    return new Promise(resolve => {
-
-        if (window.TradingView) {
-
-            resolve();
-
-            return;
-        }
-
-        const interval =
-            setInterval(() => {
-
-                if (window.TradingView) {
-
-                    clearInterval(interval);
-
-                    resolve();
-                }
-
-            }, 50);
-    });
+  container.appendChild(wrapper);
 }
 
 loadMiniCharts();
