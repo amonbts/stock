@@ -134,6 +134,17 @@
       ]
     },
     {
+      "title": "Advanced Micro Devices, Inc.",
+      "symbol": "NASDAQ:AMD",
+      "tvSymbolUrl": "NASDAQ-AMD",
+      "interval": "D",
+      "height": 550,
+      "groups": [
+        "XTB",
+        "Stocks"
+      ]
+    },
+    {
       "title": "ASML Holding NV",
       "symbol": "GETTEX:ASME",
       "tvSymbolUrl": "GETTEX-ASME",
