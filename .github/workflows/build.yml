@@ -1,9 +1,10 @@
 name: Generate Dashboard Data
 
 on:
-  push:
-    branches:
-      - main
+    workflow_run:
+        workflows: ["Deploy Dashboard"]
+        types:
+            - completed
 
 permissions:
   contents: read
