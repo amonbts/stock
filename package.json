@@ -1,0 +1,6 @@
+{
+  "type": "module",
+  "scripts": {
+    "build:data": "node scripts/enrich-symbols.js"
+  }
+}

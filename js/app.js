@@ -4,8 +4,7 @@ async function loadDashboard() {
 
   await waitForTradingView();
 
-  const response =
-    await fetch('./dashboard.json');
+  const response = await fetch('./generated/dashboard.json')
 
   dashboardConfig =
     await response.json();
