@@ -13,8 +13,6 @@
   "widgets": [
     {
       "symbol": "NYSE:NOW",
-      "interval": "D",
-      "height": 550,
       "groups": [
         "XTB",
         "Stocks"
@@ -22,8 +20,6 @@
     },
     {
       "symbol": "NASDAQ:META",
-      "interval": "D",
-      "height": 550,
       "groups": [
         "XTB",
         "Stocks",
@@ -32,8 +28,6 @@
     },
     {
       "symbol": "NASDAQ:TSLA",
-      "interval": "D",
-      "height": 550,
       "groups": [
         "XTB",
         "Stocks"
@@ -41,8 +35,6 @@
     },
     {
       "symbol": "NASDAQ:LRCX",
-      "interval": "D",
-      "height": 550,
       "groups": [
         "XTB",
         "Stocks"
@@ -50,8 +42,6 @@
     },
     {
       "symbol": "NASDAQ:CIEN",
-      "interval": "D",
-      "height": 550,
       "groups": [
         "XTB",
         "Stocks"
@@ -59,8 +49,6 @@
     },
     {
       "symbol": "NYSE:TMS",
-      "interval": "D",
-      "height": 550,
       "groups": [
         "XTB",
         "Stocks"
@@ -68,8 +56,6 @@
     },
     {
       "symbol": "NASDAQ:STX",
-      "interval": "D",
-      "height": 550,
       "groups": [
         "XTB",
         "Stocks"
@@ -77,8 +63,6 @@
     },
     {
       "symbol": "NASDAQ:MU",
-      "interval": "D",
-      "height": 550,
       "groups": [
         "XTB",
         "Stocks"
@@ -86,8 +70,6 @@
     },
     {
       "symbol": "NASDAQ:INTC",
-      "interval": "D",
-      "height": 550,
       "groups": [
         "XTB",
         "Stocks"
@@ -95,8 +77,6 @@
     },
     {
       "symbol": "NASDAQ:SNDK",
-      "interval": "D",
-      "height": 550,
       "groups": [
         "XTB",
         "Stocks"
@@ -104,8 +84,6 @@
     },
     {
       "symbol": "NASDAQ:AMD",
-      "interval": "D",
-      "height": 550,
       "groups": [
         "XTB",
         "Stocks"
@@ -113,8 +91,6 @@
     },
     {
       "symbol": "NASDAQ:WDC",
-      "interval": "D",
-      "height": 550,
       "groups": [
         "XTB",
         "Stocks"
@@ -122,8 +98,6 @@
     },
     {
       "symbol": "NASDAQ:AMZN",
-      "interval": "D",
-      "height": 550,
       "groups": [
         "XTB",
         "Stocks"
@@ -131,8 +105,6 @@
     },
     {
       "symbol": "GETTEX:ASME",
-      "interval": "D",
-      "height": 550,
       "groups": [
         "BossaG",
         "Stocks"
@@ -140,8 +112,6 @@
     },
     {
       "symbol": "GPW:DIA",
-      "interval": "D",
-      "height": 550,
       "groups": [
         "BossaG",
         "Stocks"
@@ -149,8 +119,6 @@
     },
     {
       "symbol": "GPW:ETFAIFS",
-      "interval": "D",
-      "height": 550,
       "groups": [
         "BossaG",
         "ETFs",
@@ -159,8 +127,6 @@
     },
     {
       "symbol": "LSE:IUIT",
-      "interval": "D",
-      "height": 550,
       "groups": [
         "BossaG",
         "ETFs",
@@ -169,8 +135,6 @@
     },
     {
       "symbol": "GPW:NVO",
-      "interval": "D",
-      "height": 550,
       "groups": [
         "BossaG",
         "Stocks"
@@ -178,8 +142,6 @@
     },
     {
       "symbol": "GPW:ETFBM40TR",
-      "interval": "D",
-      "height": 550,
       "groups": [
         "BossaE",
         "ETFs"
@@ -187,8 +149,6 @@
     },
     {
       "symbol": "XETR:2B76",
-      "interval": "D",
-      "height": 550,
       "groups": [
         "BossaE",
         "ETFs"
@@ -196,8 +156,6 @@
     },
     {
       "symbol": "XETR:EMQQ",
-      "interval": "D",
-      "height": 550,
       "groups": [
         "BossaE",
         "ETFs"
