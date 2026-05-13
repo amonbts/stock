@@ -12,7 +12,6 @@
   ],
   "widgets": [
     {
-      "title": "ServiceNow, Inc.",
       "symbol": "NYSE:NOW",
       "interval": "D",
       "height": 550,
@@ -22,7 +21,6 @@
       ]
     },
     {
-      "title": "Meta Platforms Inc Class A",
       "symbol": "NASDAQ:META",
       "interval": "D",
       "height": 550,
@@ -33,7 +31,6 @@
       ]
     },
     {
-      "title": "Tesla, Inc.",
       "symbol": "NASDAQ:TSLA",
       "interval": "D",
       "height": 550,
@@ -43,7 +40,6 @@
       ]
     },
     {
-      "title": "Lam Research Corporation",
       "symbol": "NASDAQ:LRCX",
       "interval": "D",
       "height": 550,
@@ -53,7 +49,6 @@
       ]
     },
     {
-      "title": "Ciena Corporation",
       "symbol": "NASDAQ:CIEN",
       "interval": "D",
       "height": 550,
@@ -63,7 +58,6 @@
       ]
     },
     {
-      "title": "Taiwan Semiconductor Manufacturing Co., Ltd. Sponsored ADR",
       "symbol": "NYSE:TMS",
       "interval": "D",
       "height": 550,
@@ -73,7 +67,6 @@
       ]
     },
     {
-      "title": "Seagate Technology Holdings PLC",
       "symbol": "NASDAQ:STX",
       "interval": "D",
       "height": 550,
@@ -83,7 +76,6 @@
       ]
     },
     {
-      "title": "Micron Technology, Inc.",
       "symbol": "NASDAQ:MU",
       "interval": "D",
       "height": 550,
@@ -93,7 +85,6 @@
       ]
     },
     {
-      "title": "Intel Corporation",
       "symbol": "NASDAQ:INTC",
       "interval": "D",
       "height": 550,
@@ -103,7 +94,6 @@
       ]
     },
     {
-      "title": "Sandisk Corporation",
       "symbol": "NASDAQ:SNDK",
       "interval": "D",
       "height": 550,
@@ -113,7 +103,6 @@
       ]
     },
     {
-      "title": "Advanced Micro Devices, Inc.",
       "symbol": "NASDAQ:AMD",
       "interval": "D",
       "height": 550,
@@ -123,7 +112,6 @@
       ]
     },
     {
-      "title": "Western Digital Corporation",
       "symbol": "NASDAQ:WDC",
       "interval": "D",
       "height": 550,
@@ -133,7 +121,6 @@
       ]
     },
     {
-      "title": "Amazon.com, Inc.",
       "symbol": "NASDAQ:AMZN",
       "interval": "D",
       "height": 550,
@@ -143,7 +130,6 @@
       ]
     },
     {
-      "title": "ASML Holding NV",
       "symbol": "GETTEX:ASME",
       "interval": "D",
       "height": 550,
@@ -153,7 +139,6 @@
       ]
     },
     {
-      "title": "Diagnostyka S.A.",
       "symbol": "GPW:DIA",
       "interval": "D",
       "height": 550,
@@ -163,7 +148,6 @@
       ]
     },
     {
-      "title": "iShares AI Infrastructure UCITS ETF Accum USD",
       "symbol": "GPW:ETFAIFS",
       "interval": "D",
       "height": 550,
@@ -174,7 +158,6 @@
       ]
     },
     {
-      "title": "iShares S&P 550 Information Technology Sector UCITS ETF",
       "symbol": "LSE:IUIT",
       "interval": "D",
       "height": 550,
@@ -185,7 +168,6 @@
       ]
     },
     {
-      "title": "Novo Nordisk A/S Class B",
       "symbol": "GPW:NVO",
       "interval": "D",
       "height": 550,
@@ -195,7 +177,6 @@
       ]
     },
     {
-      "title": "BETA ETF WIG40TR PORTFELOWY FUNDUSZ INWESTYCYJNY ZAMKNIETY A",
       "symbol": "GPW:ETFBM40TR",
       "interval": "D",
       "height": 550,
@@ -205,7 +186,6 @@
       ]
     },
     {
-      "title": "iShares Automation & Robotics UCITS ETF",
       "symbol": "XETR:2B76",
       "interval": "D",
       "height": 550,
@@ -215,7 +195,6 @@
       ]
     },
     {
-      "title": "Hanetf ICAV - EMQQ EM Internet & Ecommerce UCITS ETF",
       "symbol": "XETR:EMQQ",
       "interval": "D",
       "height": 550,
