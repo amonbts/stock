@@ -23,3 +23,11 @@ Modyfikuj:
 dashboard.json
 
 Po pushu GitHub Action automatycznie opublikuje nową wersję.
+
+npm i playwright
+npx playwright install
+
+
+
+node tv_export.js
+npm run build:stockdata
