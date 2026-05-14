@@ -143,6 +143,10 @@ function renderMiniChart(
         'line-chart-type',
         'Line'
     );
+    miniChart.setAttribute(
+        'chart-only',
+        'true'
+    );
 
 
     // miniChart.setAttribute(
