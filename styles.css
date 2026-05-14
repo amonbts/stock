@@ -33,11 +33,27 @@ body {
   min-height: 220px;
 } */
 
-tv-mini-chart {
+/* tv-mini-chart {
   width: 100%;
   display: block;
 }
 
 tv-mini-chart .bottom-link {
   display: none;
+} */
+
+.mini-chart-widget {
+  height: 220px;
+  width: 100%;
+}
+
+.tv-mini-chart-wrapper {
+  height: 100%;
+  width: 100%;
+}
+
+tv-mini-chart {
+  display: block;
+  width: 100%;
+  height: 100%;
 }

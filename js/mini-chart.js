@@ -113,74 +113,134 @@ function setupLazyMiniChart(
     observer.observe(container);
 }
 
+// function renderMiniChart(
+//     containerId,
+//     widget
+// ) {
+
+//     const container =
+//         document.getElementById(
+//             containerId
+//         );
+
+//     container.innerHTML = '';
+
+//     const miniChart =
+//         document.createElement(
+//             'tv-mini-chart'
+//         );
+
+//     miniChart.setAttribute(
+//         'symbol',
+//         widget.symbol
+//     );
+
+//     miniChart.setAttribute(
+//         'time-frame',
+//         '5D'
+//     );
+//     miniChart.setAttribute(
+//         'line-chart-type',
+//         'Line'
+//     );
+//     miniChart.setAttribute(
+//         'chart-only',
+//         'true'
+//     );
+
+
+//     // miniChart.setAttribute(
+//     //     'color-theme',
+//     //     'dark'
+//     // );
+
+//     // miniChart.setAttribute(
+//     //     'locale',
+//     //     'en'
+//     // );
+
+//     // miniChart.setAttribute(
+//     //     'width',
+//     //     '100%'
+//     // );
+
+//     // miniChart.setAttribute(
+//     //     'height',
+//     //     '220'
+//     // );
+
+//     miniChart.setAttribute(
+//         'show-time-scale',
+//         'true'
+//     );
+//     //   miniChart.setAttribute(
+//     //     'large-chart-url',
+//     //     './index.html'
+//     //   );
+
+//     container.appendChild(
+//         miniChart
+//     );
+// }
+
 function renderMiniChart(
-    containerId,
-    widget
+  containerId,
+  widget
 ) {
 
-    const container =
-        document.getElementById(
-            containerId
-        );
-
-    container.innerHTML = '';
-
-    const miniChart =
-        document.createElement(
-            'tv-mini-chart'
-        );
-
-    miniChart.setAttribute(
-        'symbol',
-        widget.symbol
+  const container =
+    document.getElementById(
+      containerId
     );
 
-    miniChart.setAttribute(
-        'time-frame',
-        '5D'
+  container.innerHTML = '';
+
+  container.style.height =
+    '220px';
+
+  const wrapper =
+    document.createElement('div');
+
+  wrapper.className =
+    'tv-mini-chart-wrapper';
+
+  const miniChart =
+    document.createElement(
+      'tv-mini-chart'
     );
-    miniChart.setAttribute(
-        'line-chart-type',
-        'Line'
-    );
-    miniChart.setAttribute(
-        'chart-only',
-        'true'
-    );
 
+  miniChart.setAttribute(
+    'symbol',
+    widget.symbol
+  );
 
-    // miniChart.setAttribute(
-    //     'color-theme',
-    //     'dark'
-    // );
+  miniChart.setAttribute(
+    'date-range',
+    '12M'
+  );
 
-    // miniChart.setAttribute(
-    //     'locale',
-    //     'en'
-    // );
+  miniChart.setAttribute(
+    'theme',
+    'dark'
+  );
 
-    // miniChart.setAttribute(
-    //     'width',
-    //     '100%'
-    // );
+  miniChart.setAttribute(
+    'locale',
+    'en'
+  );
 
-    // miniChart.setAttribute(
-    //     'height',
-    //     '220'
-    // );
+  miniChart.setAttribute(
+    'chart-only',
+    'false'
+  );
 
-    miniChart.setAttribute(
-        'show-time-scale',
-        'true'
-    );
-    //   miniChart.setAttribute(
-    //     'large-chart-url',
-    //     './index.html'
-    //   );
+  wrapper.appendChild(
+    miniChart
+  );
 
-    container.appendChild(
-        miniChart
-    );
+  container.appendChild(
+    wrapper
+  );
 }
 
 loadMiniCharts();
