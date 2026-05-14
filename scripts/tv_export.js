@@ -318,11 +318,11 @@ async function exportIndex(indexKey) {
 
     const csv = toCSV(data);
 
-    const filenameJSON = `./generated/tradingview_${indexKey}_${getYearWeek()}.json`;
+    const filenameJSON = `./storage/tradingview_${indexKey}_${getYearWeek()}.json`;
 
     await saveJsonToFile(data, filenameJSON);
 
-    const filename = `./generated/tradingview_${indexKey}_${getYearWeek()}.csv`;
+    const filename = `./storage/tradingview_${indexKey}_${getYearWeek()}.csv`;
 
     await saveCSVToFile(csv, filename);
 
