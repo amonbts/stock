@@ -29,18 +29,7 @@ body {
   margin-left: 4px;
 }
 
-/* .mini-chart-widget {
-  min-height: 220px;
-} */
 
-/* tv-mini-chart {
-  width: 100%;
-  display: block;
-}
-*/
-tv-mini-chart .bottom-link {
-  display: none;
-} 
 
 .bottom-link {
   display: none;
