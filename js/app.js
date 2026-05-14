@@ -214,8 +214,6 @@ function renderTradingViewWidget(
 
     save_image: false,
 
-    studies: [],
-
     details: false,
 
     hotlist: false,
