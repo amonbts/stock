@@ -184,63 +184,63 @@ function setupLazyMiniChart(
 // }
 
 function renderMiniChart(
-  containerId,
-  widget
+    containerId,
+    widget
 ) {
 
-  const container =
-    document.getElementById(
-      containerId
+    const container =
+        document.getElementById(
+            containerId
+        );
+
+    container.innerHTML = '';
+
+    container.style.height =
+        '150px';
+
+    const wrapper =
+        document.createElement('div');
+
+    wrapper.className =
+        'tv-mini-chart-wrapper';
+
+    const miniChart =
+        document.createElement(
+            'tv-mini-chart'
+        );
+
+    miniChart.setAttribute(
+        'symbol',
+        widget.symbol
     );
 
-  container.innerHTML = '';
-
-  container.style.height =
-    '150px';
-
-  const wrapper =
-    document.createElement('div');
-
-  wrapper.className =
-    'tv-mini-chart-wrapper';
-
-  const miniChart =
-    document.createElement(
-      'tv-mini-chart'
+    miniChart.setAttribute(
+        'time-frame',
+        '5D'
     );
 
-  miniChart.setAttribute(
-    'symbol',
-    widget.symbol
-  );
+    miniChart.setAttribute(
+        'theme',
+        'dark'
+    );
 
-  miniChart.setAttribute(
-    'time-frame',
-    '5D'
-  );
+    miniChart.setAttribute(
+        'show-time-scale',
+        'true'
+    );
 
-  miniChart.setAttribute(
-    'theme',
-    'dark'
-  );
+    miniChart.setAttribute(
+        'chart-only',
+        'false'
+    );
 
-  miniChart.setAttribute(
-    'show-time-scale',
-    'true'
-  );
+    wrapper.appendChild(
+        miniChart
+    );
 
-  miniChart.setAttribute(
-    'chart-only',
-    'false'
-  );
-
-  wrapper.appendChild(
-    miniChart
-  );
-
-  container.appendChild(
-    wrapper
-  );
+    container.appendChild(
+        wrapper
+    );
 }
 
 loadMiniCharts();
