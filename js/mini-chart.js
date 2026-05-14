@@ -196,7 +196,7 @@ function renderMiniChart(
   container.innerHTML = '';
 
   container.style.height =
-    '220px';
+    '150px';
 
   const wrapper =
     document.createElement('div');
@@ -215,8 +215,8 @@ function renderMiniChart(
   );
 
   miniChart.setAttribute(
-    'date-range',
-    '12M'
+    'time-frame',
+    '5D'
   );
 
   miniChart.setAttribute(
@@ -225,8 +225,8 @@ function renderMiniChart(
   );
 
   miniChart.setAttribute(
-    'locale',
-    'en'
+    'show-time-scale',
+    'true'
   );
 
   miniChart.setAttribute(
