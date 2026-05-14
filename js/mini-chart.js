@@ -216,7 +216,7 @@ function renderMiniChart(
 
     miniChart.setAttribute(
         'time-frame',
-        '5D'
+        '1W'
     );
 
     miniChart.setAttribute(
