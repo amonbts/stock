@@ -1,5 +1,5 @@
-const axios = require('axios');
-const fs = require('fs');
+import axios from 'axios';
+import fs from 'node:fs';
 
 // =====================
 // CONFIG: INDEX MAP
@@ -30,7 +30,9 @@ function clean(text) {
 function formatNumber(value) {
     if (value === null || value === undefined) return '';
     const num = Number(value);
-    if (!isNaN(num)) return num.toFixed(2);
+    if (!isNaN(num)) {
+        return num.toFixed(2);
+    }
     return value || '';
 }
 
@@ -38,8 +40,14 @@ function escapeCSV(value) {
     if (value === null || value === undefined) return '';
 
     let str = String(value);
-    if (str.includes('"')) str = str.replace(/"/g, '""');
-    if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+    if (str.includes('"')) {
+        str = str.replace(/"/g, '""');
+    }
+    if (
+        str.includes(',') ||
+        str.includes('"') ||
+        str.includes('\n')
+    ) {
         str = `"${str}"`;
     }
     return str;
@@ -81,7 +89,11 @@ const COLUMNS = [
     "RSI"
 ];
 
-const EXTRA_COLUMNS = ["trend_score", "trend_label", "rsi_state"];
+const EXTRA_COLUMNS = [
+    "trend_score",
+    "trend_label",
+    "rsi_state"
+];
 
 // =====================
 // API FETCH (PRO)
@@ -93,7 +105,10 @@ async function fetchData(symbolset, endpoint) {
         symbols: {
             symbolset: [symbolset]
         },
-        sort: { sortBy: "market_cap_basic", sortOrder: "desc" },
+        sort: {
+            sortBy: "market_cap_basic",
+            sortOrder: "desc"
+        },
         columns: COLUMNS,
         range: [0, 500]
     };
@@ -114,11 +129,28 @@ async function fetchData(symbolset, endpoint) {
 // =====================
 function calculateTrendScore(row) {
     const [
-        name, description, exchange, close, currency, change,
-        perfW, perf1M, perf3M, perf6M, perfYTD, perfY,
-        perf5Y, perf10Y, perfAll,
-        volW, volM,
-        sma10, sma30, sma50, sma100, sma200,
+        name,
+        description,
+        exchange,
+        close,
+        currency,
+        change,
+        perfW,
+        perf1M,
+        perf3M,
+        perf6M,
+        perfYTD,
+        perfY,
+        perf5Y,
+        perf10Y,
+        perfAll,
+        volW,
+        volM,
+        sma10,
+        sma30,
+        sma50,
+        sma100,
+        sma200,
         rsi
     ] = row;
 
@@ -151,15 +183,18 @@ function getTrendLabel(score) {
     if (score >= 6) return "STRONG_UP";
     if (score >= 4) return "UP";
     if (score >= 2) return "SIDEWAYS";
+
     return "DOWN";
 }
 
 function getRSIState(rsi) {
     const r = Number(rsi);
+
     if (isNaN(r)) return "";
 
     if (r >= 70) return "OVERBOUGHT";
     if (r <= 30) return "OVERSOLD";
+
     return "NEUTRAL";
 }
 
@@ -176,6 +211,7 @@ function toCSV(response) {
     rows.sort((a, b) => {
         const scoreA = calculateTrendScore(a.d);
         const scoreB = calculateTrendScore(b.d);
+
         return scoreB - scoreA;
     });
 
@@ -183,16 +219,25 @@ function toCSV(response) {
         .map(escapeCSV)
         .join(',');
 
-    const csvRows = rows.map(row => {
+    const csvRows = rows.map((row) => {
         if (!row.d) return '';
 
-        const cleaned = row.d.map(cell => formatNumber(clean(cell)));
+        const cleaned = row.d.map((cell) =>
+            formatNumber(clean(cell))
+        );
 
         const trendScore = calculateTrendScore(cleaned);
         const trendLabel = getTrendLabel(trendScore);
-        const rsiState = getRSIState(cleaned[cleaned.length - 1]);
+        const rsiState = getRSIState(
+            cleaned[cleaned.length - 1]
+        );
 
-        return [...cleaned, trendScore, trendLabel, rsiState]
+        return [
+            ...cleaned,
+            trendScore,
+            trendLabel,
+            rsiState
+        ]
             .map(escapeCSV)
             .join(',');
     });
@@ -212,13 +257,21 @@ async function exportIndex(indexKey) {
 
     console.log(`📡 Fetching ${indexKey} via ${config.endpoint}...`);
 
-    const data = await fetchData(config.symbolset, config.endpoint);
+    const data = await fetchData(
+        config.symbolset,
+        config.endpoint
+    );
 
     const csv = toCSV(data);
 
-    const filename = `./generated/tradingview_${indexKey}_${getTimestamp()}.csv`;
+    const filename =
+        `./generated/tradingview_${indexKey}_${getTimestamp()}.csv`;
 
-    fs.writeFileSync(filename, '\uFEFF' + csv, 'utf-8');
+    fs.writeFileSync(
+        filename,
+        '\uFEFF' + csv,
+        'utf-8'
+    );
 
     console.log(`✅ Done: ${filename}`);
     console.log(`📊 Rows (${indexKey}):`, data.data?.length || 0);
@@ -229,7 +282,11 @@ async function exportIndex(indexKey) {
 // =====================
 (async () => {
     try {
-        const INDEXES = ["SPX", "NDX", "SXXP"];
+        const INDEXES = [
+            "SPX",
+            "NDX",
+            "SXXP"
+        ];
 
         for (const idx of INDEXES) {
             await exportIndex(idx);
