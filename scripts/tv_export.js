@@ -3,6 +3,7 @@
 
 import axios from 'axios';
 import fs from 'node:fs/promises';
+import path from 'node:path';
 
 // =====================
 // CONFIG: INDEX MAP
@@ -280,7 +281,17 @@ function toCSV(response) {
     return [header, ...csvRows].join('\n');
 }
 
+async function ensureDirectoryExists(filename) {
+    const dir = path.dirname(filename);
+
+    await fs.mkdir(dir, {
+        recursive: true
+    });
+}
+
 async function saveJsonToFile(data, filename) {
+    await ensureDirectoryExists(filename);
+
     const json = JSON.stringify(data, null, 2);
     await fs.writeFile(filename, json, 'utf-8');
     console.log(`✅ JSON saved: ${filename}`);
@@ -288,6 +299,8 @@ async function saveJsonToFile(data, filename) {
 
 
 async function saveCSVToFile(data, filename) {
+    await ensureDirectoryExists(filename);
+
     await fs.writeFile(
         filename,
         '\uFEFF' + data,
@@ -346,6 +359,6 @@ async function exportIndex(indexKey) {
         }
 
     } catch (err) {
-        console.error("❌ Error:", err.message);
+        console.error("❌ Error:", err.message, err.stack);
     }
 })();
