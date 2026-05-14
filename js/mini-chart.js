@@ -196,7 +196,7 @@ function renderMiniChart(
     container.innerHTML = '';
 
     container.style.height =
-        '180px';
+        '220px';
 
     const wrapper =
         document.createElement('div');
