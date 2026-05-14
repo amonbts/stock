@@ -37,3 +37,7 @@ tv-mini-chart {
   width: 100%;
   display: block;
 }
+
+tv-mini-chart .bottom-link {
+  display: none;
+}
