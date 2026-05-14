@@ -42,6 +42,11 @@ tv-mini-chart .bottom-link {
   display: none;
 } 
 
+.bottom-link {
+  display: none;
+} 
+
+
 .mini-chart-widget {
   height: 220px;
   width: 100%;
