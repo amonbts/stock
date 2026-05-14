@@ -1,5 +1,8 @@
+// Data fetch and export engine for TradingView indexes (SPX, NDX, SXXP) with trend analysis and CSV output.
+// https://www.tradingview.com/screener/sJpmfOgn/
+
 import axios from 'axios';
-import fs from 'node:fs';
+import fs from 'node:fs/promises';
 
 // =====================
 // CONFIG: INDEX MAP
@@ -57,6 +60,38 @@ function getTimestamp() {
     const now = new Date();
     const pad = (n) => String(n).padStart(2, '0');
     return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+}
+
+function getWeekOfYear(date = new Date()) {
+    // Copy date so original is not modified
+    const d = new Date(Date.UTC(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate()
+    ));
+
+    // ISO week date weeks start on Monday
+    // Get current day number (1 = Monday, 7 = Sunday)
+    const dayNum = d.getUTCDay() || 7;
+
+    // Set date to nearest Thursday
+    d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+
+    // First day of year
+    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+
+    // Calculate full weeks
+    const weekNo = Math.ceil(
+        (((d - yearStart) / 86400000) + 1) / 7
+    );
+
+    return weekNo;
+}
+
+function getYearWeek() {
+    const now = new Date();
+    const week = getWeekOfYear(now);
+    return `${now.getFullYear()}-${week}`;
 }
 
 // =====================
@@ -245,6 +280,25 @@ function toCSV(response) {
     return [header, ...csvRows].join('\n');
 }
 
+async function saveJsonToFile(data, filename) {
+    const json = JSON.stringify(data, null, 2);
+    await fs.writeFile(filename, json, 'utf-8');
+    console.log(`✅ JSON saved: ${filename}`);
+}
+
+
+async function saveCSVToFile(data, filename) {
+    await fs.writeFile(
+        filename,
+        '\uFEFF' + data,
+        'utf-8'
+    );
+
+    console.log(`✅ JSON saved: ${filename}`);
+}
+
+
+
 // =====================
 // EXPORT ENGINE
 // =====================
@@ -264,14 +318,13 @@ async function exportIndex(indexKey) {
 
     const csv = toCSV(data);
 
-    const filename =
-        `./generated/tradingview_${indexKey}_${getTimestamp()}.csv`;
+    const filenameJSON = `./generated/tradingview_${indexKey}_${getYearWeek()}.json`;
 
-    fs.writeFileSync(
-        filename,
-        '\uFEFF' + csv,
-        'utf-8'
-    );
+    await saveJsonToFile(data, filenameJSON);
+
+    const filename = `./generated/tradingview_${indexKey}_${getYearWeek()}.csv`;
+
+    await saveCSVToFile(csv, filename);
 
     console.log(`✅ Done: ${filename}`);
     console.log(`📊 Rows (${indexKey}):`, data.data?.length || 0);
