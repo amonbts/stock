@@ -137,8 +137,13 @@ function renderMiniChart(
 
     miniChart.setAttribute(
         'time-frame',
-        '1M'
+        '5D'
     );
+    miniChart.setAttribute(
+        'line-chart-type',
+        'Line'
+    );
+
 
     // miniChart.setAttribute(
     //     'color-theme',
