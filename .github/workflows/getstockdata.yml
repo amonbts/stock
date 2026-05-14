@@ -1,6 +1,7 @@
 name: Get Table Data
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: "0 15 * * 0-6"
 
