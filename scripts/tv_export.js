@@ -99,6 +99,7 @@ function getYearWeek() {
 // COLUMNS
 // =====================
 const COLUMNS = [
+    "ticker-view",
     "name",
     "description",
     "exchange",
@@ -116,7 +117,6 @@ const COLUMNS = [
     "Perf.All",
     "Volatility.W",
     "Volatility.M",
-
     "SMA10",
     "SMA30",
     "SMA50",
