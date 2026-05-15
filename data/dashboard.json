@@ -8,7 +8,8 @@
     "XTB",
     "Binnance",
     "ETFs",
-    "Stocks"
+    "Stocks",
+    "New"
   ],
   "widgets": [
     {
@@ -177,6 +178,12 @@
       "symbol": "BINANCE:BNBUSDC",
       "groups": [
         "Binnance"
+      ]
+    },
+    {
+      "symbol": "NASDAQ:NVDA",
+      "groups": [
+        "New"
       ]
     }
   ]
