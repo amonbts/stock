@@ -9,7 +9,8 @@
     "Binnance",
     "ETFs",
     "Stocks",
-    "New"
+    "New",
+    "Indexes"
   ],
   "widgets": [
     {
@@ -184,6 +185,12 @@
       "symbol": "NASDAQ:NVDA",
       "groups": [
         "New"
+      ]
+    },
+    {
+      "symbol": "SPX",
+      "groups": [
+        "Indexes"
       ]
     }
   ]
