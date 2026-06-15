@@ -99,6 +99,7 @@ async function loadScreener() {
   const status = document.getElementById('screener-status');
   const controls = document.getElementById('screener-controls');
   const topSelect = document.getElementById('top-n-select');
+  const undoButton = document.getElementById('screener-undo');
   const resetButton = document.getElementById('screener-reset');
 
   try {
@@ -115,7 +116,13 @@ async function loadScreener() {
     if (topSelect) {
       topSelect.addEventListener('change', () => {
         rowLimit = topSelect.value;
-        applyTopFilter();
+        applyTopFilter({ recordHistory: true });
+      });
+    }
+
+    if (undoButton) {
+      undoButton.addEventListener('click', () => {
+        undoLastStep();
       });
     }
 
@@ -126,7 +133,7 @@ async function loadScreener() {
     }
 
     controls?.classList.remove('d-none');
-  document.getElementById('screener-state')?.classList.remove('d-none');
+    document.getElementById('screener-state')?.classList.remove('d-none');
 
     renderTabs();
     renderActiveTabTable();
@@ -234,7 +241,12 @@ function renderActiveTabTable() {
 
       const clickedColumn = columns[clickedIndex];
       if (clickedColumn?.label) {
-        addHistoryEntry(`Sort: ${clickedColumn.label} ${sortState.direction === 'asc' ? '↑' : '↓'}`);
+        addHistoryEntry({
+          type: 'sort',
+          label: `Sort: ${clickedColumn.label} ${sortState.direction === 'asc' ? '↑' : '↓'}`,
+          columnIndex: clickedIndex,
+          direction: sortState.direction
+        });
       }
 
       renderActiveTabTable();
@@ -242,7 +254,7 @@ function renderActiveTabTable() {
   });
 }
 
-function applyTopFilter() {
+function applyTopFilter({ recordHistory = true } = {}) {
   const activeTab = TAB_CONFIG.find((tab) => tab.id === activeTabId);
 
   if (!activeTab) {
@@ -263,7 +275,14 @@ function applyTopFilter() {
 
   const sortedCurrent = getSortedRows(workingRows, activeTab);
   workingRows = sortedCurrent.slice(0, n);
-  addHistoryEntry(`Top ${n}`);
+
+  if (recordHistory) {
+    addHistoryEntry({
+      type: 'top',
+      label: `Top ${n}`,
+      n
+    });
+  }
 
   renderActiveTabTable();
 }
@@ -285,15 +304,77 @@ function resetPipeline(silent = false) {
   }
 }
 
-function addHistoryEntry(label) {
-  if (!label) {
+function addHistoryEntry(entry) {
+  if (!entry || !entry.label) {
     return;
   }
 
-  pipelineHistory.push(label);
+  const lastEntry = pipelineHistory[pipelineHistory.length - 1];
+  if (
+    entry.type === 'sort' &&
+    lastEntry?.type === 'sort'
+  ) {
+    pipelineHistory[pipelineHistory.length - 1] = entry;
+    return;
+  }
+
+  pipelineHistory.push(entry);
 
   if (pipelineHistory.length > 10) {
     pipelineHistory = pipelineHistory.slice(-10);
+  }
+}
+
+function undoLastStep() {
+  if (!pipelineHistory.length) {
+    return;
+  }
+
+  pipelineHistory.pop();
+
+  sortState = {
+    tabId: activeTabId,
+    columnIndex: null,
+    direction: 'asc'
+  };
+
+  replayPipelineHistory();
+  renderActiveTabTable();
+}
+
+function replayPipelineHistory() {
+  const activeTab = TAB_CONFIG.find((tab) => tab.id === activeTabId);
+  workingRows = [...screenerRows];
+  rowLimit = 'all';
+
+  if (!activeTab) {
+    return;
+  }
+
+  for (const step of pipelineHistory) {
+    if (step.type === 'sort') {
+      sortState = {
+        tabId: activeTabId,
+        columnIndex: step.columnIndex,
+        direction: step.direction || 'asc'
+      };
+      continue;
+    }
+
+    if (step.type === 'top') {
+      const n = Number(step.n);
+
+      if (Number.isFinite(n) && n > 0) {
+        const sortedCurrent = getSortedRows(workingRows, activeTab);
+        workingRows = sortedCurrent.slice(0, n);
+        rowLimit = String(n);
+      }
+    }
+  }
+
+  const topSelect = document.getElementById('top-n-select');
+  if (topSelect) {
+    topSelect.value = rowLimit;
   }
 }
 
@@ -319,12 +400,21 @@ function renderStatePanel(visibleCount = null) {
 
   if (pipelineHistory.length === 0) {
     historyRoot.innerHTML = '<span class="text-body-secondary small">No filter/sort actions yet.</span>';
+    const undoButton = document.getElementById('screener-undo');
+    if (undoButton) {
+      undoButton.disabled = true;
+    }
     return;
   }
 
   historyRoot.innerHTML = pipelineHistory
-    .map((entry, index) => `<span class="badge text-bg-secondary screener-state-pill">${index + 1}. ${escapeHtml(entry)}</span>`)
+    .map((entry, index) => `<span class="badge text-bg-secondary screener-state-pill">${index + 1}. ${escapeHtml(entry.label)}</span>`)
     .join('');
+
+  const undoButton = document.getElementById('screener-undo');
+  if (undoButton) {
+    undoButton.disabled = false;
+  }
 }
 
 function getCurrentSortLabel(activeTab) {
