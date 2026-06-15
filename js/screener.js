@@ -11,6 +11,12 @@ let sortState = {
   direction: 'asc'
 };
 
+const URL_PARAM_TAB = 'tab';
+const URL_PARAM_STEPS = 'steps';
+const URL_PARAM_SORT = 'sort';
+const URL_PARAM_DIR = 'dir';
+const URL_PARAM_TOP = 'top';
+
 const TAB_CONFIG = [
   {
     id: 'overview',
@@ -135,6 +141,8 @@ async function loadScreener() {
     controls?.classList.remove('d-none');
     document.getElementById('screener-state')?.classList.remove('d-none');
 
+  applyStateFromUrl();
+
     renderTabs();
     renderActiveTabTable();
 
@@ -224,6 +232,7 @@ function renderActiveTabTable() {
   }
 
   renderStatePanel(visibleRows.length);
+  syncStateToUrl();
 
   tableRoot.querySelectorAll('th[data-col-index]').forEach((th) => {
     th.addEventListener('click', () => {
@@ -376,6 +385,178 @@ function replayPipelineHistory() {
   if (topSelect) {
     topSelect.value = rowLimit;
   }
+}
+
+function applyStateFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const tabFromUrl = params.get(URL_PARAM_TAB);
+
+  if (tabFromUrl && TAB_CONFIG.some((tab) => tab.id === tabFromUrl)) {
+    activeTabId = tabFromUrl;
+  }
+
+  const activeTab = TAB_CONFIG.find((tab) => tab.id === activeTabId);
+
+  sortState = {
+    tabId: activeTabId,
+    columnIndex: null,
+    direction: 'asc'
+  };
+  pipelineHistory = [];
+  rowLimit = 'all';
+  workingRows = [...screenerRows];
+
+  if (!activeTab) {
+    return;
+  }
+
+  const rawSteps = params.get(URL_PARAM_STEPS);
+
+  if (rawSteps) {
+    const parsedSteps = parseStepsFromUrl(rawSteps, activeTab);
+    if (parsedSteps.length > 0) {
+      pipelineHistory = parsedSteps;
+      replayPipelineHistory();
+      return;
+    }
+  }
+
+  const legacySteps = parseLegacyStepsFromUrl(params, activeTab);
+  if (legacySteps.length > 0) {
+    pipelineHistory = legacySteps;
+    replayPipelineHistory();
+  }
+}
+
+function parseStepsFromUrl(rawSteps, activeTab) {
+  return rawSteps
+    .split(',')
+    .map((token) => token.trim())
+    .filter(Boolean)
+    .map((token) => parseStepToken(token, activeTab))
+    .filter(Boolean);
+}
+
+function parseStepToken(token, activeTab) {
+  const [type, a, b] = token.split('.');
+
+  if (type === 's') {
+    const columnIndex = Number(a);
+    const direction = b === 'desc' ? 'desc' : 'asc';
+
+    if (!Number.isInteger(columnIndex) || columnIndex < 0 || columnIndex >= activeTab.columns.length) {
+      return null;
+    }
+
+    return {
+      type: 'sort',
+      label: `Sort: ${activeTab.columns[columnIndex].label} ${direction === 'asc' ? '↑' : '↓'}`,
+      columnIndex,
+      direction
+    };
+  }
+
+  if (type === 't') {
+    const n = Number(a);
+
+    if (!Number.isFinite(n) || n <= 0) {
+      return null;
+    }
+
+    return {
+      type: 'top',
+      label: `Top ${n}`,
+      n
+    };
+  }
+
+  return null;
+}
+
+function parseLegacyStepsFromUrl(params, activeTab) {
+  const steps = [];
+  const sortParam = params.get(URL_PARAM_SORT);
+  const dirParam = params.get(URL_PARAM_DIR);
+  const topParam = params.get(URL_PARAM_TOP);
+
+  if (sortParam !== null && sortParam !== '') {
+    const columnIndex = Number(sortParam);
+
+    if (Number.isInteger(columnIndex) && columnIndex >= 0 && columnIndex < activeTab.columns.length) {
+      const direction = dirParam === 'desc' ? 'desc' : 'asc';
+      steps.push({
+        type: 'sort',
+        label: `Sort: ${activeTab.columns[columnIndex].label} ${direction === 'asc' ? '↑' : '↓'}`,
+        columnIndex,
+        direction
+      });
+    }
+  }
+
+  if (topParam !== null && topParam !== '' && topParam !== 'all') {
+    const n = Number(topParam);
+
+    if (Number.isFinite(n) && n > 0) {
+      steps.push({
+        type: 'top',
+        label: `Top ${n}`,
+        n
+      });
+    }
+  }
+
+  return steps;
+}
+
+function syncStateToUrl() {
+  const params = new URLSearchParams(window.location.search);
+
+  params.set(URL_PARAM_TAB, activeTabId);
+
+  if (pipelineHistory.length > 0) {
+    params.set(URL_PARAM_STEPS, serializeStepsForUrl(pipelineHistory));
+  } else {
+    params.delete(URL_PARAM_STEPS);
+  }
+
+  if (sortState.tabId === activeTabId && Number.isInteger(sortState.columnIndex)) {
+    params.set(URL_PARAM_SORT, String(sortState.columnIndex));
+    params.set(URL_PARAM_DIR, sortState.direction === 'desc' ? 'desc' : 'asc');
+  } else {
+    params.delete(URL_PARAM_SORT);
+    params.delete(URL_PARAM_DIR);
+  }
+
+  if (rowLimit !== 'all') {
+    params.set(URL_PARAM_TOP, String(rowLimit));
+  } else {
+    params.delete(URL_PARAM_TOP);
+  }
+
+  const query = params.toString();
+  const nextUrl = `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash || ''}`;
+  window.history.replaceState(null, '', nextUrl);
+}
+
+function serializeStepsForUrl(steps) {
+  return steps
+    .map((step) => {
+      if (step.type === 'sort' && Number.isInteger(step.columnIndex)) {
+        const dir = step.direction === 'desc' ? 'desc' : 'asc';
+        return `s.${step.columnIndex}.${dir}`;
+      }
+
+      if (step.type === 'top') {
+        const n = Number(step.n);
+        if (Number.isFinite(n) && n > 0) {
+          return `t.${n}`;
+        }
+      }
+
+      return null;
+    })
+    .filter(Boolean)
+    .join(',');
 }
 
 function renderStatePanel(visibleCount = null) {
