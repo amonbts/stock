@@ -10,7 +10,8 @@
     "ETFs",
     "Stocks",
     "New",
-    "Indexes"
+    "Indexes",
+    "Old"
   ],
   "widgets": [
     {
@@ -23,7 +24,6 @@
     {
       "symbol": "NASDAQ:META",
       "groups": [
-        "XTB",
         "Stocks",
         "BossaG"
       ]
@@ -45,7 +45,7 @@
     {
       "symbol": "NYSE:CIEN",
       "groups": [
-        "XTB",
+        "Old",
         "Stocks"
       ]
     },
@@ -73,7 +73,7 @@
     {
       "symbol": "NASDAQ:INTC",
       "groups": [
-        "XTB",
+        "Old",
         "Stocks"
       ]
     },
@@ -101,7 +101,7 @@
     {
       "symbol": "NASDAQ:AMZN",
       "groups": [
-        "XTB",
+        "Old",
         "Stocks"
       ]
     },
@@ -184,13 +184,63 @@
     {
       "symbol": "NASDAQ:NVDA",
       "groups": [
-        "New"
+        "XTB",
+        "Stocks"
       ]
     },
     {
       "symbol": "SPREADEX:SPX",
       "groups": [
         "Indexes"
+      ]
+    },
+    {
+      "symbol": "NASDAQ:SPCX",
+      "groups": [
+        "XTB",
+        "Stocks"
+      ]
+    },
+    {
+      "symbol": "NASDAQ:MRVL",
+      "groups": [
+        "XTB",
+        "Stocks"
+      ]
+    },
+    {
+      "symbol": "NASDAQ:ACMR",
+      "groups": [
+        "XTB",
+        "Stocks"
+      ]
+    },
+    {
+      "symbol": "NASDAQ:APH",
+      "groups": [
+        "XTB",
+        "Stocks"
+      ]
+    },
+    {
+      "symbol": "FWB:IFX",
+      "groups": [
+        "XTB",
+        "Stocks"
+      ]
+    },
+    {
+      "symbol": "FWB:IART",
+      "groups": [
+        "XTB",
+        "ETFs"
+      ]
+    },
+    {
+      "symbol": "FWB:SEC0",
+      "groups": [
+        "XTB",
+        "ETFs"
       ]
     }
   ]
