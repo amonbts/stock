@@ -189,7 +189,7 @@
       ]
     },
     {
-      "symbol": "SPREADEX:SPX",
+      "symbol": "CBOE:SPX",
       "groups": [
         "Indexes"
       ]
@@ -216,7 +216,7 @@
       ]
     },
     {
-      "symbol": "NASDAQ:APH",
+      "symbol": "NYSE:APH",
       "groups": [
         "XTB",
         "Stocks"
@@ -230,14 +230,14 @@
       ]
     },
     {
-      "symbol": "FWB:IART",
+      "symbol": "XETR:IART",
       "groups": [
         "XTB",
         "ETFs"
       ]
     },
     {
-      "symbol": "FWB:SEC0",
+      "symbol": "XETR:SEC0",
       "groups": [
         "XTB",
         "ETFs"

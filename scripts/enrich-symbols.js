@@ -1,13 +1,92 @@
 import fs from 'fs/promises';
 
-const API_KEY =
-    process.env.FINNHUB_API_KEY;
-
 const inputPath =
     './data/dashboard.json';
 
 const outputPath =
     './generated/dashboard.json';
+
+const SCANNER_ENDPOINTS = [
+    'america',
+    'global',
+    'crypto'
+];
+
+const titleCache =
+    new Map();
+
+async function getTitleFromScanner(symbolCode) {
+
+    if (titleCache.has(symbolCode)) {
+
+        return titleCache.get(symbolCode);
+    }
+
+    const ticker =
+        symbolCode.split(':')[1] || symbolCode;
+
+    for (const endpoint of SCANNER_ENDPOINTS) {
+
+        try {
+
+            const response =
+                await fetch(
+                    `https://scanner.tradingview.com/${endpoint}/scan`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'content-type': 'application/json',
+                            'origin': 'https://www.tradingview.com',
+                            'referer': 'https://www.tradingview.com/'
+                        },
+                        body: JSON.stringify({
+                            symbols: {
+                                tickers: [symbolCode],
+                                query: {
+                                    types: []
+                                }
+                            },
+                            columns: [
+                                'name',
+                                'description'
+                            ]
+                        })
+                    }
+                );
+
+            if (!response.ok) {
+
+                continue;
+            }
+
+            const data =
+                await response.json();
+
+            const row =
+                data?.data?.[0];
+
+            if (!row) {
+
+                continue;
+            }
+
+            const title =
+                row?.d?.[1] || row?.d?.[0] || ticker;
+
+            titleCache.set(symbolCode, title);
+
+            return title;
+
+        } catch {
+
+            // Try next endpoint.
+        }
+    }
+
+    titleCache.set(symbolCode, ticker);
+
+    return ticker;
+}
 
 async function enrich() {
 
@@ -30,34 +109,16 @@ async function enrich() {
                         widget.symbol
                             .split(':')[1];
 
-                    if (!API_KEY) {
-
-                        return {
-
-                            ...widget,
-
-                            title: widget.title || symbol,
-                            height: widget.height || 550,
-                            interval: widget.interval || "D",
-
-                        };
-                    }
-
                     try {
 
-                        const response =
-                            await fetch(
-                                `https://finnhub.io/api/v1/stock/profile2?symbol=${symbol}&token=${API_KEY}`
-                            );
-
-                        const data =
-                            await response.json();
+                        const scannerTitle =
+                            await getTitleFromScanner(widget.symbol);
 
                         return {
 
                             ...widget,
 
-                            title : data.name|| symbol,
+                            title: widget.title || scannerTitle || symbol,
                             height: widget.height || 550,
                             interval: widget.interval || "D",
 
@@ -73,9 +134,9 @@ async function enrich() {
 
                             ...widget,
 
-                            title: symbol,
-                             height: 550,
-                             interval: "D",
+                            title: widget.title || symbol,
+                            height: widget.height || 550,
+                            interval: widget.interval || "D",
                         };
                     }
                 }
@@ -102,13 +163,6 @@ async function enrich() {
             2
         )
     );
-
-    if (!API_KEY) {
-
-        console.log(
-            'FINNHUB_API_KEY not set: generated dashboard.json with local fallback titles.'
-        );
-    }
 
     console.log(
         'Generated dashboard.json'
