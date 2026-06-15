@@ -1,4 +1,15 @@
 let marketQuotesConfig = null;
+let premarketRequestId = 0;
+let premarketSnapshot = null;
+
+const US_EXCHANGES = new Set([
+  'NASDAQ',
+  'NYSE',
+  'AMEX',
+  'ARCA',
+  'BATS',
+  'CBOE'
+]);
 
 async function loadMarketQuotes() {
   const root = document.getElementById('market-quotes-root');
@@ -85,6 +96,8 @@ function renderWidgets() {
   }
 
   root.innerHTML = `
+    <div class="col-12 mb-3" id="premarket-panel"></div>
+
     <div class="col-12">
       <div class="shadow-sm">
         <div class="card-body">
@@ -103,10 +116,13 @@ function renderWidgets() {
   `;
 
   const widgetContainer = document.getElementById('market-quotes-widget');
+  const premarketPanel = document.getElementById('premarket-panel');
 
   if (!widgetContainer) {
     return;
   }
+
+  renderPremarketPanel(premarketPanel, filteredWidgets);
 
   const script = document.createElement('script');
   script.type = 'text/javascript';
@@ -127,6 +143,183 @@ function renderWidgets() {
   });
 
   widgetContainer.appendChild(script);
+}
+
+function isUsSymbol(symbol) {
+  const exchange = (symbol || '').split(':')[0];
+  return US_EXCHANGES.has(exchange);
+}
+
+function getUniqueSymbols(widgets) {
+  return [...new Set((widgets || []).map((w) => w.symbol).filter(Boolean))];
+}
+
+function formatPremarketValue(value) {
+  if (value === null || value === undefined || Number.isNaN(Number(value))) {
+    return '—';
+  }
+
+  return Number(value).toFixed(2);
+}
+
+function formatPremarketPct(value) {
+  if (value === null || value === undefined || Number.isNaN(Number(value))) {
+    return '—';
+  }
+
+  return `${Number(value).toFixed(2)}%`;
+}
+
+function getTradingViewLogoUrl(row) {
+  const logoid = (row?.logoid || '').toLowerCase();
+
+  if (!logoid) {
+    return '';
+  }
+
+  return `https://s3-symbol-logo.tradingview.com/${logoid}.svg`;
+}
+
+async function loadPremarketSnapshot() {
+  if (premarketSnapshot) {
+    return premarketSnapshot;
+  }
+
+  const response = await fetch('./generated/premarket.json');
+
+  if (!response.ok) {
+    throw new Error(`Premarket file load failed: HTTP ${response.status}`);
+  }
+
+  premarketSnapshot = await response.json();
+
+  return premarketSnapshot;
+}
+
+async function renderPremarketPanel(panel, filteredWidgets) {
+  if (!panel) {
+    return;
+  }
+
+  const currentRequestId = ++premarketRequestId;
+
+  const usSymbols = getUniqueSymbols(filteredWidgets)
+    .filter(isUsSymbol)
+    .slice(0, 50);
+
+  if (usSymbols.length === 0) {
+    panel.innerHTML = `
+      <div class="alert alert-secondary mb-0">
+        Pre-market: no US symbols in current filter.
+      </div>
+    `;
+
+    return;
+  }
+
+  panel.innerHTML = `
+    <div class="alert alert-secondary mb-0">Loading pre-market data...</div>
+  `;
+
+  try {
+    const snapshot = await loadPremarketSnapshot();
+
+    if (currentRequestId !== premarketRequestId) {
+      return;
+    }
+
+    const rows = (snapshot?.rows || [])
+      .filter((row) => usSymbols.includes(row.symbol));
+
+    const withPremarket = rows
+      .filter((row) => row.premarketClose !== null && row.premarketClose !== undefined)
+      .sort((a, b) => Math.abs(Number(b.premarketChangePct || 0)) - Math.abs(Number(a.premarketChangePct || 0)))
+      .slice(0, 50);
+
+    if (withPremarket.length === 0) {
+      panel.innerHTML = `
+        <div class="alert alert-secondary mb-0">
+          Pre-market: no live extended-hours values at the moment.
+        </div>
+      `;
+
+      return;
+    }
+
+    panel.innerHTML = `
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="mb-0">Pre-market (top movers)</h5>
+            <small class="text-body-secondary">US symbols only · snapshot</small>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-sm align-middle mb-0">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th class="text-end">Last</th>
+                  <th class="text-end">Pre</th>
+                  <th class="text-end">Δ</th>
+                  <th class="text-end">Δ%</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${withPremarket.map((row) => {
+                  const symbolPath = (row.symbol || '').replace(':', '-');
+                  const signClass = Number(row.premarketChangePct) >= 0 ? 'text-success' : 'text-danger';
+                  const logoUrl = getTradingViewLogoUrl(row);
+
+                  return `
+                    <tr>
+                      <td>
+                        <a
+                          href="https://www.tradingview.com/symbols/${symbolPath}/"
+                          target="_blank"
+                          rel="noopener nofollow"
+                          class="d-inline-flex align-items-center gap-2 text-decoration-none">
+
+                          ${logoUrl ? `
+                          <img
+                            src="${logoUrl}"
+                            alt="${row.ticker || row.symbol} logo"
+                            width="18"
+                            height="18"
+                            class="rounded-circle"
+                            loading="lazy"
+                            onerror="this.style.display='none'">
+                          ` : ''}
+
+                          <span>${row.title || row.ticker || row.symbol}</span>
+                        </a>
+                      </td>
+                      <td class="text-end">${formatPremarketValue(row.close)}</td>
+                      <td class="text-end">${formatPremarketValue(row.premarketClose)}</td>
+                      <td class="text-end ${signClass}">${formatPremarketValue(row.premarketChangeAbs)}</td>
+                      <td class="text-end ${signClass}">${formatPremarketPct(row.premarketChangePct)}</td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    `;
+  } catch (error) {
+    if (currentRequestId !== premarketRequestId) {
+      return;
+    }
+
+    console.error('Premarket fetch failed', error);
+
+    panel.innerHTML = `
+      <div class="alert alert-secondary mb-0">
+        Pre-market is temporarily unavailable.
+      </div>
+    `;
+  }
 }
 
 loadMarketQuotes();
