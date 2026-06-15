@@ -4,22 +4,75 @@
 import axios from 'axios';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import axiosRetry from 'axios-retry';
+
+axiosRetry(axios, {
+    retries: 5,
+
+    retryDelay: (retryCount) => {
+        const delay = retryCount * 2000;
+
+        console.log(
+            `⚠️ Retry #${retryCount} in ${delay}ms`
+        );
+
+        return delay;
+    },
+
+    retryCondition: (error) => {
+        return (
+            axiosRetry.isNetworkOrIdempotentRequestError(error) ||
+            error.code === 'ECONNRESET' ||
+            error.code === 'ETIMEDOUT' ||
+            error.response?.status === 429 ||
+            error.response?.status >= 500
+        );
+    }
+});
 
 // =====================
 // CONFIG: INDEX MAP
 // =====================
 const INDEX_CONFIG = {
     SPX: {
-        symbolset: "SYML:SP;SPX",
-        endpoint: "america"
+        symbols: {
+            symbolset: "SYML:SP;SPX"
+        },
+        endpoint: "america",
+        range: [0, 500],
     },
     NDX: {
-        symbolset: "SYML:NASDAQ;NDX",
-        endpoint: "america"
+        symbols: {
+            symbolset: "SYML:NASDAQ;NDX",
+        },
+        endpoint: "america",
+        range: [0, 500],
     },
     SXXP: {
-        symbolset: "SYML:TVC;SXXP",
-        endpoint: "global"
+        symbols: {
+            symbolset: "SYML:TVC;SXXP",
+        },
+        endpoint: "global",
+        range: [0, 500],
+    },
+    CUSTOM: {
+        endpoint: "america",
+        range: [0, 1000],
+        filter: [
+            {
+                left: "market_cap_basic",
+                operation: "egreater",
+                right: 1000000000
+            },
+            {
+                left: "sector",
+                operation: "in_range",
+                right: [
+                    "Electronic Technology",
+                ]
+            }
+        ]
+
     }
 };
 
@@ -134,22 +187,22 @@ const EXTRA_COLUMNS = [
 // =====================
 // API FETCH (PRO)
 // =====================
-async function fetchData(symbolset, endpoint) {
-    const url = `https://scanner.tradingview.com/${endpoint}/scan`;
+async function fetchData(config) {
+    const url = `https://scanner.tradingview.com/${config.endpoint}/scan`;
 
     const payload = {
-        symbols: {
-            symbolset: [symbolset]
-        },
+        symbols: config.symbols || {},
         sort: {
             sortBy: "market_cap_basic",
             sortOrder: "desc"
         },
         columns: COLUMNS,
-        range: [0, 500]
+        range: config.range || [0, 500],
+        filter: config.filters || []
     };
 
     const res = await axios.post(url, payload, {
+        timeout: 30000,
         headers: {
             'content-type': 'application/json',
             'origin': 'https://www.tradingview.com',
@@ -165,6 +218,7 @@ async function fetchData(symbolset, endpoint) {
 // =====================
 function calculateTrendScore(row) {
     const [
+        tickerView,
         name,
         description,
         exchange,
@@ -258,11 +312,17 @@ function toCSV(response) {
     const csvRows = rows.map((row) => {
         if (!row.d) return '';
 
+        // const cleaned = row.d.map((cell) =>
+        //     formatNumber(clean(cell))
+        // );
+
+        // const trendScore = calculateTrendScore(cleaned);
+
+        const trendScore = calculateTrendScore(row.d);
+
         const cleaned = row.d.map((cell) =>
             formatNumber(clean(cell))
         );
-
-        const trendScore = calculateTrendScore(cleaned);
         const trendLabel = getTrendLabel(trendScore);
         const rsiState = getRSIState(
             cleaned[cleaned.length - 1]
@@ -307,7 +367,7 @@ async function saveCSVToFile(data, filename) {
         'utf-8'
     );
 
-    console.log(`✅ JSON saved: ${filename}`);
+    console.log(`✅ CSV saved: ${filename}`);
 }
 
 
@@ -354,8 +414,8 @@ async function exportIndex(indexKey) {
             "SXXP"
         ];
 
-        for (const idx of INDEXES) {
-            await exportIndex(idx);
+        for (const indexKey of Object.keys(INDEX_CONFIG)) {
+            await exportIndex(indexKey);
         }
 
     } catch (err) {
