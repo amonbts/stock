@@ -180,6 +180,34 @@ function getTradingViewLogoUrl(row) {
   return `https://s3-symbol-logo.tradingview.com/${logoid}.svg`;
 }
 
+function isWithinUsPremarketNow() {
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/New_York',
+    weekday: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  });
+
+  const parts = formatter.formatToParts(new Date());
+
+  const weekday = parts.find((part) => part.type === 'weekday')?.value;
+  const hour = Number(parts.find((part) => part.type === 'hour')?.value);
+  const minute = Number(parts.find((part) => part.type === 'minute')?.value);
+
+  const isWeekday = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].includes(weekday);
+
+  if (!isWeekday || Number.isNaN(hour) || Number.isNaN(minute)) {
+    return false;
+  }
+
+  const totalMinutes = (hour * 60) + minute;
+  const premarketStart = 4 * 60;
+  const premarketEnd = (9 * 60) + 30;
+
+  return totalMinutes >= premarketStart && totalMinutes < premarketEnd;
+}
+
 async function loadPremarketSnapshot() {
   if (premarketSnapshot) {
     return premarketSnapshot;
@@ -236,6 +264,12 @@ async function renderPremarketPanel(panel, filteredWidgets) {
       .sort((a, b) => Math.abs(Number(b.premarketChangePct || 0)) - Math.abs(Number(a.premarketChangePct || 0)))
       .slice(0, 50);
 
+    const isPremarketLive = isWithinUsPremarketNow();
+    const premarketCardClass = isPremarketLive ? '' : 'premarket-muted';
+    const premarketStateText = isPremarketLive
+      ? 'Live pre-market'
+      : 'Outside pre-market hours';
+
     if (withPremarket.length === 0) {
       panel.innerHTML = `
         <div class="alert alert-secondary mb-0">
@@ -247,11 +281,11 @@ async function renderPremarketPanel(panel, filteredWidgets) {
     }
 
     panel.innerHTML = `
-      <div class="card shadow-sm">
+      <div class="card shadow-sm ${premarketCardClass}">
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center mb-2">
             <h5 class="mb-0">Pre-market (top movers)</h5>
-            <small class="text-body-secondary">US symbols only · snapshot</small>
+            <small class="text-body-secondary">US symbols only · snapshot · ${premarketStateText}</small>
           </div>
 
           <div class="table-responsive">
