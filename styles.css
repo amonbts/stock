@@ -52,11 +52,13 @@ tv-mini-chart {
   height: 100%;
 }
 
+.session-muted,
 .premarket-muted {
   opacity: 0.55;
   filter: grayscale(40%);
 }
 
+.session-muted a,
 .premarket-muted a {
   color: var(--bs-secondary-color) !important;
 }

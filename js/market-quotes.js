@@ -1,5 +1,6 @@
 let marketQuotesConfig = null;
 let premarketRequestId = 0;
+let postmarketRequestId = 0;
 let premarketSnapshot = null;
 
 const US_EXCHANGES = new Set([
@@ -97,6 +98,7 @@ function renderWidgets() {
 
   root.innerHTML = `
     <div class="col-12 mb-3" id="premarket-panel"></div>
+    <div class="col-12 mb-3" id="postmarket-panel"></div>
 
     <div class="col-12">
       <div class="shadow-sm">
@@ -117,12 +119,14 @@ function renderWidgets() {
 
   const widgetContainer = document.getElementById('market-quotes-widget');
   const premarketPanel = document.getElementById('premarket-panel');
+  const postmarketPanel = document.getElementById('postmarket-panel');
 
   if (!widgetContainer) {
     return;
   }
 
   renderPremarketPanel(premarketPanel, filteredWidgets);
+  renderPostmarketPanel(postmarketPanel, filteredWidgets);
 
   const script = document.createElement('script');
   script.type = 'text/javascript';
@@ -208,6 +212,34 @@ function isWithinUsPremarketNow() {
   return totalMinutes >= premarketStart && totalMinutes < premarketEnd;
 }
 
+function isWithinUsPostmarketNow() {
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/New_York',
+    weekday: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  });
+
+  const parts = formatter.formatToParts(new Date());
+
+  const weekday = parts.find((part) => part.type === 'weekday')?.value;
+  const hour = Number(parts.find((part) => part.type === 'hour')?.value);
+  const minute = Number(parts.find((part) => part.type === 'minute')?.value);
+
+  const isWeekday = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].includes(weekday);
+
+  if (!isWeekday || Number.isNaN(hour) || Number.isNaN(minute)) {
+    return false;
+  }
+
+  const totalMinutes = (hour * 60) + minute;
+  const postmarketStart = 16 * 60;
+  const postmarketEnd = 20 * 60;
+
+  return totalMinutes >= postmarketStart && totalMinutes < postmarketEnd;
+}
+
 async function loadPremarketSnapshot() {
   if (premarketSnapshot) {
     return premarketSnapshot;
@@ -265,10 +297,13 @@ async function renderPremarketPanel(panel, filteredWidgets) {
       .slice(0, 50);
 
     const isPremarketLive = isWithinUsPremarketNow();
-    const premarketCardClass = isPremarketLive ? '' : 'premarket-muted';
+    const premarketCardClass = isPremarketLive ? '' : 'session-muted';
     const premarketStateText = isPremarketLive
       ? 'Live pre-market'
       : 'Outside pre-market hours';
+    const premarketCollapseId = 'premarket-table-collapse';
+    const premarketExpandedClass = isPremarketLive ? 'show' : '';
+    const premarketExpandedAria = isPremarketLive ? 'true' : 'false';
 
     if (withPremarket.length === 0) {
       panel.innerHTML = `
@@ -285,9 +320,21 @@ async function renderPremarketPanel(panel, filteredWidgets) {
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center mb-2">
             <h5 class="mb-0">Pre-market (top movers)</h5>
-            <small class="text-body-secondary">US symbols only · snapshot · ${premarketStateText}</small>
+            <div class="d-flex align-items-center gap-2">
+              <small class="text-body-secondary">US symbols only · snapshot · ${premarketStateText}</small>
+              <button
+                class="btn btn-sm btn-outline-secondary"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#${premarketCollapseId}"
+                aria-expanded="${premarketExpandedAria}"
+                aria-controls="${premarketCollapseId}">
+                Toggle
+              </button>
+            </div>
           </div>
 
+          <div id="${premarketCollapseId}" class="collapse ${premarketExpandedClass}">
           <div class="table-responsive">
             <table class="table table-sm align-middle mb-0">
               <thead>
@@ -338,6 +385,7 @@ async function renderPremarketPanel(panel, filteredWidgets) {
               </tbody>
             </table>
           </div>
+          </div>
         </div>
       </div>
     `;
@@ -351,6 +399,154 @@ async function renderPremarketPanel(panel, filteredWidgets) {
     panel.innerHTML = `
       <div class="alert alert-secondary mb-0">
         Pre-market is temporarily unavailable.
+      </div>
+    `;
+  }
+}
+
+async function renderPostmarketPanel(panel, filteredWidgets) {
+  if (!panel) {
+    return;
+  }
+
+  const currentRequestId = ++postmarketRequestId;
+
+  const usSymbols = getUniqueSymbols(filteredWidgets)
+    .filter(isUsSymbol)
+    .slice(0, 50);
+
+  if (usSymbols.length === 0) {
+    panel.innerHTML = `
+      <div class="alert alert-secondary mb-0">
+        After hours: no US symbols in current filter.
+      </div>
+    `;
+
+    return;
+  }
+
+  panel.innerHTML = `
+    <div class="alert alert-secondary mb-0">Loading after-hours data...</div>
+  `;
+
+  try {
+    const snapshot = await loadPremarketSnapshot();
+
+    if (currentRequestId !== postmarketRequestId) {
+      return;
+    }
+
+    const rows = (snapshot?.rows || [])
+      .filter((row) => usSymbols.includes(row.symbol));
+
+    const withPostmarket = rows
+      .filter((row) => row.postmarketClose !== null && row.postmarketClose !== undefined)
+      .sort((a, b) => Math.abs(Number(b.postmarketChangePct || 0)) - Math.abs(Number(a.postmarketChangePct || 0)))
+      .slice(0, 50);
+
+    const isPostmarketLive = isWithinUsPostmarketNow();
+    const postmarketCardClass = isPostmarketLive ? '' : 'session-muted';
+    const postmarketStateText = isPostmarketLive
+      ? 'Live after hours'
+      : 'Outside after-hours session';
+    const postmarketCollapseId = 'postmarket-table-collapse';
+    const postmarketExpandedClass = isPostmarketLive ? 'show' : '';
+    const postmarketExpandedAria = isPostmarketLive ? 'true' : 'false';
+
+    if (withPostmarket.length === 0) {
+      panel.innerHTML = `
+        <div class="alert alert-secondary mb-0">
+          After hours: no live extended-hours values at the moment.
+        </div>
+      `;
+
+      return;
+    }
+
+    panel.innerHTML = `
+      <div class="card shadow-sm ${postmarketCardClass}">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="mb-0">After hours (top movers)</h5>
+            <div class="d-flex align-items-center gap-2">
+              <small class="text-body-secondary">US symbols only · snapshot · ${postmarketStateText}</small>
+              <button
+                class="btn btn-sm btn-outline-secondary"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#${postmarketCollapseId}"
+                aria-expanded="${postmarketExpandedAria}"
+                aria-controls="${postmarketCollapseId}">
+                Toggle
+              </button>
+            </div>
+          </div>
+
+          <div id="${postmarketCollapseId}" class="collapse ${postmarketExpandedClass}">
+          <div class="table-responsive">
+            <table class="table table-sm align-middle mb-0">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th class="text-end">Last</th>
+                  <th class="text-end">After</th>
+                  <th class="text-end">Δ</th>
+                  <th class="text-end">Δ%</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${withPostmarket.map((row) => {
+                  const symbolPath = (row.symbol || '').replace(':', '-');
+                  const signClass = Number(row.postmarketChangePct) >= 0 ? 'text-success' : 'text-danger';
+                  const logoUrl = getTradingViewLogoUrl(row);
+
+                  return `
+                    <tr>
+                      <td>
+                        <a
+                          href="https://www.tradingview.com/symbols/${symbolPath}/"
+                          target="_blank"
+                          rel="noopener nofollow"
+                          class="d-inline-flex align-items-center gap-2 text-decoration-none">
+
+                          ${logoUrl ? `
+                          <img
+                            src="${logoUrl}"
+                            alt="${row.ticker || row.symbol} logo"
+                            width="18"
+                            height="18"
+                            class="rounded-circle"
+                            loading="lazy"
+                            onerror="this.style.display='none'">
+                          ` : ''}
+
+                          <span>${row.title || row.ticker || row.symbol}</span>
+                        </a>
+                      </td>
+                      <td class="text-end">${formatPremarketValue(row.close)}</td>
+                      <td class="text-end">${formatPremarketValue(row.postmarketClose)}</td>
+                      <td class="text-end ${signClass}">${formatPremarketValue(row.postmarketChangeAbs)}</td>
+                      <td class="text-end ${signClass}">${formatPremarketPct(row.postmarketChangePct)}</td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+          </div>
+        </div>
+      </div>
+    `;
+  } catch (error) {
+    if (currentRequestId !== postmarketRequestId) {
+      return;
+    }
+
+    console.error('Postmarket fetch failed', error);
+
+    panel.innerHTML = `
+      <div class="alert alert-secondary mb-0">
+        After-hours data is temporarily unavailable.
       </div>
     `;
   }
