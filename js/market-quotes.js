@@ -79,7 +79,7 @@ function renderWidgets() {
 
   root.innerHTML = `
     <div class="col-12">
-      <div class="card shadow-sm">
+      <div class="shadow-sm">
         <div class="card-body">
           <div class="tradingview-widget-container">
             <div id="market-quotes-widget" class="tradingview-widget-container__widget"></div>
@@ -109,7 +109,7 @@ function renderWidgets() {
   script.text = JSON.stringify({
     colorTheme: 'dark',
     locale: 'en',
-    largeChartUrl: 'index.html',
+    largeChartUrl: '',
     isTransparent: false,
     showSymbolLogo: true,
     backgroundColor: '#212529',
