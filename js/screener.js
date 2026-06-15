@@ -1,8 +1,10 @@
 const DATA_PATH = './storage/tradingview_CUSTOM_2026-25.json';
 
 let screenerRows = [];
+let workingRows = [];
 let activeTabId = 'overview';
 let rowLimit = 'all';
+let pipelineHistory = [];
 let sortState = {
   tabId: 'overview',
   columnIndex: null,
@@ -97,6 +99,7 @@ async function loadScreener() {
   const status = document.getElementById('screener-status');
   const controls = document.getElementById('screener-controls');
   const topSelect = document.getElementById('top-n-select');
+  const resetButton = document.getElementById('screener-reset');
 
   try {
     const response = await fetch(DATA_PATH);
@@ -107,15 +110,23 @@ async function loadScreener() {
 
     const payload = await response.json();
     screenerRows = payload?.data || [];
+    workingRows = [...screenerRows];
 
     if (topSelect) {
       topSelect.addEventListener('change', () => {
         rowLimit = topSelect.value;
-        renderActiveTabTable();
+        applyTopFilter();
+      });
+    }
+
+    if (resetButton) {
+      resetButton.addEventListener('click', () => {
+        resetPipeline();
       });
     }
 
     controls?.classList.remove('d-none');
+  document.getElementById('screener-state')?.classList.remove('d-none');
 
     renderTabs();
     renderActiveTabTable();
@@ -152,6 +163,8 @@ function renderTabs() {
           columnIndex: null,
           direction: 'asc'
         };
+
+        resetPipeline(true);
       }
 
       renderTabs();
@@ -169,8 +182,7 @@ function renderActiveTabTable() {
   }
 
   const columns = activeTab.columns;
-  const sortedRows = getSortedRows(screenerRows, activeTab);
-  const visibleRows = applyRowLimit(sortedRows);
+  const visibleRows = getSortedRows(workingRows, activeTab);
   const status = document.getElementById('screener-status');
 
   tableRoot.classList.remove('d-none');
@@ -178,6 +190,7 @@ function renderActiveTabTable() {
     <table class="table table-sm table-hover align-middle">
       <thead>
         <tr>
+          <th class="text-end">#</th>
           ${columns.map((col, index) => {
             const isActiveSort = sortState.tabId === activeTabId && sortState.columnIndex === index;
             const arrow = isActiveSort
@@ -189,8 +202,9 @@ function renderActiveTabTable() {
         </tr>
       </thead>
       <tbody>
-        ${visibleRows.map((row) => `
+        ${visibleRows.map((row, index) => `
           <tr>
+            <td class="text-end text-body-secondary">${index + 1}</td>
             ${columns.map((col) => `<td class="${col.className || ''}">${col.render(row)}</td>`).join('')}
           </tr>
         `).join('')}
@@ -199,9 +213,10 @@ function renderActiveTabTable() {
   `;
 
   if (status && status.classList.contains('alert-success')) {
-    const limitText = rowLimit === 'all' ? 'all' : `top ${rowLimit}`;
-    status.textContent = `Loaded ${screenerRows.length} rows from ${DATA_PATH} · showing ${visibleRows.length} (${limitText})`;
+    status.textContent = `Loaded ${screenerRows.length} rows from ${DATA_PATH} · working set: ${workingRows.length} · showing ${visibleRows.length}`;
   }
+
+  renderStatePanel(visibleRows.length);
 
   tableRoot.querySelectorAll('th[data-col-index]').forEach((th) => {
     th.addEventListener('click', () => {
@@ -217,27 +232,112 @@ function renderActiveTabTable() {
         };
       }
 
+      const clickedColumn = columns[clickedIndex];
+      if (clickedColumn?.label) {
+        addHistoryEntry(`Sort: ${clickedColumn.label} ${sortState.direction === 'asc' ? '↑' : '↓'}`);
+      }
+
       renderActiveTabTable();
     });
   });
 }
 
-function applyRowLimit(rows) {
-  if (!Array.isArray(rows)) {
-    return [];
+function applyTopFilter() {
+  const activeTab = TAB_CONFIG.find((tab) => tab.id === activeTabId);
+
+  if (!activeTab) {
+    return;
   }
 
   if (rowLimit === 'all') {
-    return rows;
+    renderActiveTabTable();
+    return;
   }
 
   const n = Number(rowLimit);
 
   if (!Number.isFinite(n) || n <= 0) {
-    return rows;
+    renderActiveTabTable();
+    return;
   }
 
-  return rows.slice(0, n);
+  const sortedCurrent = getSortedRows(workingRows, activeTab);
+  workingRows = sortedCurrent.slice(0, n);
+  addHistoryEntry(`Top ${n}`);
+
+  renderActiveTabTable();
+}
+
+function resetPipeline(silent = false) {
+  workingRows = [...screenerRows];
+  rowLimit = 'all';
+  pipelineHistory = [];
+
+  const topSelect = document.getElementById('top-n-select');
+  if (topSelect) {
+    topSelect.value = 'all';
+  }
+
+  if (!silent) {
+    renderActiveTabTable();
+  } else {
+    renderStatePanel();
+  }
+}
+
+function addHistoryEntry(label) {
+  if (!label) {
+    return;
+  }
+
+  pipelineHistory.push(label);
+
+  if (pipelineHistory.length > 10) {
+    pipelineHistory = pipelineHistory.slice(-10);
+  }
+}
+
+function renderStatePanel(visibleCount = null) {
+  const summaryRoot = document.getElementById('screener-state-summary');
+  const historyRoot = document.getElementById('screener-state-history');
+  const activeTab = TAB_CONFIG.find((tab) => tab.id === activeTabId);
+
+  if (!summaryRoot || !historyRoot || !activeTab) {
+    return;
+  }
+
+  const sortLabel = getCurrentSortLabel(activeTab);
+  const displayVisibleCount = Number.isFinite(visibleCount) ? visibleCount : workingRows.length;
+  const topLabel = rowLimit === 'all' ? 'All rows' : `Top ${rowLimit}`;
+
+  summaryRoot.innerHTML = [
+    `<strong>Tab:</strong> ${escapeHtml(activeTab.label)}`,
+    `<strong>Sort:</strong> ${escapeHtml(sortLabel)}`,
+    `<strong>Scope:</strong> ${escapeHtml(topLabel)}`,
+    `<strong>Rows:</strong> ${workingRows.length}/${screenerRows.length} (showing ${displayVisibleCount})`
+  ].join(' &nbsp;•&nbsp; ');
+
+  if (pipelineHistory.length === 0) {
+    historyRoot.innerHTML = '<span class="text-body-secondary small">No filter/sort actions yet.</span>';
+    return;
+  }
+
+  historyRoot.innerHTML = pipelineHistory
+    .map((entry, index) => `<span class="badge text-bg-secondary screener-state-pill">${index + 1}. ${escapeHtml(entry)}</span>`)
+    .join('');
+}
+
+function getCurrentSortLabel(activeTab) {
+  if (sortState.tabId !== activeTab.id || sortState.columnIndex === null || sortState.columnIndex === undefined) {
+    return 'None';
+  }
+
+  const col = activeTab.columns[sortState.columnIndex];
+  if (!col) {
+    return 'None';
+  }
+
+  return `${col.label} ${sortState.direction === 'asc' ? '↑' : '↓'}`;
 }
 
 function renderNameCell(row) {

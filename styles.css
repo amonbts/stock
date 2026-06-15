@@ -71,3 +71,7 @@ tv-mini-chart {
 .screener-full-width table {
   width: 100%;
 }
+
+.screener-state-pill {
+  font-size: 0.75rem;
+}

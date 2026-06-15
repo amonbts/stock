@@ -32,6 +32,14 @@
         <option value="100">Top 100</option>
         <option value="200">Top 200</option>
       </select>
+      <button id="screener-reset" class="btn btn-sm btn-outline-secondary" type="button">Reset</button>
+    </div>
+
+    <div id="screener-state" class="d-none card border-0 bg-body-tertiary mb-3">
+      <div class="card-body py-2 px-3">
+        <div id="screener-state-summary" class="small text-body-secondary"></div>
+        <div id="screener-state-history" class="d-flex flex-wrap gap-2 mt-2"></div>
+      </div>
     </div>
 
     <div id="screener-status" class="alert alert-secondary">Loading screener data...</div>
