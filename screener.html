@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+
+<head>
+  <meta charset="utf-8">
+  <title>Screener</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div id="navbar-container"></div>
+
+  <div class="container-fluid py-4 px-3 px-md-4">
+    <header class="pb-3 mb-4 border-bottom">
+      <h1 class="mb-1">Screener</h1>
+      <p class="text-body-secondary mb-0">
+        Data source: <code>storage/tradingview_CUSTOM_2026-25.json</code>
+      </p>
+    </header>
+
+    <ul class="nav nav-tabs mb-3" id="screener-tabs" role="tablist"></ul>
+
+    <div id="screener-controls" class="d-none d-flex align-items-center gap-2 mb-3">
+      <label for="top-n-select" class="form-label mb-0 text-body-secondary">Rows:</label>
+      <select id="top-n-select" class="form-select form-select-sm" style="width: 120px;">
+        <option value="all" selected>All</option>
+        <option value="25">Top 25</option>
+        <option value="50">Top 50</option>
+        <option value="100">Top 100</option>
+        <option value="200">Top 200</option>
+      </select>
+    </div>
+
+    <div id="screener-status" class="alert alert-secondary">Loading screener data...</div>
+
+    <div id="screener-table-root" class="table-responsive d-none screener-full-width"></div>
+  </div>
+
+  <script src="./js/navbar.js"></script>
+  <script>
+    loadNavbar('screener');
+  </script>
+  <script src="./js/screener.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

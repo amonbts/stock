@@ -62,3 +62,12 @@ tv-mini-chart {
 .premarket-muted a {
   color: var(--bs-secondary-color) !important;
 }
+
+.screener-sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.screener-full-width table {
+  width: 100%;
+}
