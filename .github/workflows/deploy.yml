@@ -5,6 +5,10 @@ on:
   push:
     branches:
       - main
+  schedule:
+    # Weekdays, every 15 minutes during premarket window (UTC).
+    # Covers US premarket across DST shifts: approx 08:00-14:45 UTC.
+    - cron: "*/15 8-14 * * 1-5"
 
 permissions:
   contents: read
@@ -36,9 +40,6 @@ jobs:
 
       - name: Build dashboard data
         run: npm run build:data
-        env:
-          FINNHUB_API_KEY:
-            ${{ secrets.FINNHUB_API_KEY }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
