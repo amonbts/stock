@@ -30,6 +30,19 @@ async function enrich() {
                         widget.symbol
                             .split(':')[1];
 
+                    if (!API_KEY) {
+
+                        return {
+
+                            ...widget,
+
+                            title: widget.title || symbol,
+                            height: widget.height || 550,
+                            interval: widget.interval || "D",
+
+                        };
+                    }
+
                     try {
 
                         const response =
@@ -89,6 +102,13 @@ async function enrich() {
             2
         )
     );
+
+    if (!API_KEY) {
+
+        console.log(
+            'FINNHUB_API_KEY not set: generated dashboard.json with local fallback titles.'
+        );
+    }
 
     console.log(
         'Generated dashboard.json'
