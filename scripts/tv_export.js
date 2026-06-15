@@ -36,40 +36,41 @@ axiosRetry(axios, {
 const INDEX_CONFIG = {
     SPX: {
         symbols: {
-            symbolset: "SYML:SP;SPX"
+            symbolset: ["SYML:SP;SPX"]
         },
         endpoint: "america",
         range: [0, 500],
     },
     NDX: {
         symbols: {
-            symbolset: "SYML:NASDAQ;NDX",
+            symbolset: ["SYML:NASDAQ;NDX"],
         },
         endpoint: "america",
         range: [0, 500],
     },
     SXXP: {
         symbols: {
-            symbolset: "SYML:TVC;SXXP",
+            symbolset: ["SYML:TVC;SXXP"],
         },
         endpoint: "global",
         range: [0, 500],
     },
     CUSTOM: {
-        endpoint: "america",
+        symbols: {
+            symbolset: ["SYML:NASDAQ;SOX", "SYML:SP;SPX", "SYML:NASDAQ;NDX", "SYML:TVC;SXXP"],
+        },
+        endpoint: "global",
         range: [0, 1000],
         filter: [
             {
                 left: "market_cap_basic",
                 operation: "egreater",
-                right: 1000000000
+                right: 6000000000
             },
             {
-                left: "sector",
-                operation: "in_range",
-                right: [
-                    "Electronic Technology",
-                ]
+                left: "is_blacklisted",
+                operation: "equal",
+                right: false
             }
         ]
 
@@ -156,8 +157,31 @@ const COLUMNS = [
     "name",
     "description",
     "exchange",
+
     "close",
+    "type",
+    "typespecs",
+    "pricescale",
+    "minmov",
+    "fractional",
+    "minmove2",
     "currency",
+    "change",
+    "volume",
+    "relative_volume_10d_calc",
+    "market_cap_basic",
+    "fundamental_currency_code",
+    "price_earnings_ttm",
+    "earnings_per_share_diluted_ttm",
+    "earnings_per_share_diluted_yoy_growth_ttm",
+    "dividends_yield_current",
+    "sector.tr",
+    "market",
+    "sector",
+    "AnalystRating",
+    "AnalystRating.tr",
+
+
     "change",
     "Perf.W",
     "Perf.1M",
@@ -170,12 +194,70 @@ const COLUMNS = [
     "Perf.All",
     "Volatility.W",
     "Volatility.M",
+
+
+    "TechRating_1D",
+    "TechRating_1D.tr",
+    "MARating_1D",
+    "MARating_1D.tr",
+    "OsRating_1D",
+    "OsRating_1D.tr",
+    "RSI",
+    "Mom",
+    // "pricescale",
+    // "minmov",
+    // "fractional",
+    // "minmove2",
+    "AO",
+    "CCI20",
+    "Stoch.K",
+    "Stoch.D",
+    "candlestick_patterns_1D",
+
+
+    "premarket_close",
+    // "type",
+    // "typespecs",
+    // "pricescale",
+    // "minmov",
+    // "fractional",
+    // "minmove2",
+    // "currency",
+    "premarket_change",
+    "premarket_gap",
+    "premarket_volume",
+    // "close",
+    // "change",
+    "gap",
+    "volume",
+    "volume_change",
+    "postmarket_close",
+    "postmarket_change",
+    "postmarket_volume",
+
+    // "market_cap_basic",
+    // "type",
+    // "typespecs",
+    // "fundamental_currency_code",
+    "Perf.1Y.MarketCap",
+    "price_earnings_ttm",
+    "price_earnings_growth_ttm",
+    "price_sales_current",
+    "price_book_fq",
+    "price_to_cash_f_operating_activities_ttm",
+    "price_free_cash_flow_ttm",
+    "price_to_cash_ratio",
+    "enterprise_value_current",
+    "enterprise_value_to_revenue_ttm",
+    "enterprise_value_to_ebit_ttm",
+    "enterprise_value_ebitda_ttm",
+
     "SMA10",
     "SMA30",
     "SMA50",
     "SMA100",
     "SMA200",
-    "RSI"
+    // "RSI"
 ];
 
 const EXTRA_COLUMNS = [
@@ -198,17 +280,34 @@ async function fetchData(config) {
         },
         columns: COLUMNS,
         range: config.range || [0, 500],
-        filter: config.filters || []
+    filter: config.filter || config.filters || []
     };
 
-    const res = await axios.post(url, payload, {
-        timeout: 30000,
-        headers: {
-            'content-type': 'application/json',
-            'origin': 'https://www.tradingview.com',
-            'referer': 'https://www.tradingview.com/'
+    let res;
+
+    try {
+
+        res = await axios.post(url, payload, {
+            timeout: 30000,
+            headers: {
+                'content-type': 'application/json',
+                'origin': 'https://www.tradingview.com',
+                'referer': 'https://www.tradingview.com/'
+            }
+        });
+
+    } catch (error) {
+
+        if (error?.response?.status === 400) {
+
+            console.error('❌ TradingView scanner returned HTTP 400');
+            console.error(`URL: ${url}`);
+            console.error('Payload:', JSON.stringify(payload, null, 2));
+            console.error('Response:', JSON.stringify(error.response?.data, null, 2));
         }
-    });
+
+        throw error;
+    }
 
     return res.data;
 }
@@ -298,41 +397,38 @@ function toCSV(response) {
         throw new Error("Invalid API response: missing data array");
     }
 
-    rows.sort((a, b) => {
-        const scoreA = calculateTrendScore(a.d);
-        const scoreB = calculateTrendScore(b.d);
+    // rows.sort((a, b) => {
+    //     const scoreA = calculateTrendScore(a.d);
+    //     const scoreB = calculateTrendScore(b.d);
 
-        return scoreB - scoreA;
-    });
+    //     return scoreB - scoreA;
+    // });
 
-    const header = [...COLUMNS, ...EXTRA_COLUMNS]
+    // const header = [...COLUMNS, ...EXTRA_COLUMNS]
+    //     .map(escapeCSV)
+    //     .join(',');
+    const header = [...COLUMNS]
         .map(escapeCSV)
         .join(',');
 
     const csvRows = rows.map((row) => {
         if (!row.d) return '';
 
-        // const cleaned = row.d.map((cell) =>
-        //     formatNumber(clean(cell))
-        // );
-
-        // const trendScore = calculateTrendScore(cleaned);
-
-        const trendScore = calculateTrendScore(row.d);
+        // const trendScore = calculateTrendScore(row.d);
 
         const cleaned = row.d.map((cell) =>
             formatNumber(clean(cell))
         );
-        const trendLabel = getTrendLabel(trendScore);
-        const rsiState = getRSIState(
-            cleaned[cleaned.length - 1]
-        );
+        // const trendLabel = getTrendLabel(trendScore);
+        // const rsiState = getRSIState(
+        //     cleaned[cleaned.length - 1]
+        // );
 
         return [
             ...cleaned,
-            trendScore,
-            trendLabel,
-            rsiState
+            // trendScore,
+            // trendLabel,
+            // rsiState
         ]
             .map(escapeCSV)
             .join(',');
@@ -384,10 +480,7 @@ async function exportIndex(indexKey) {
 
     console.log(`📡 Fetching ${indexKey} via ${config.endpoint}...`);
 
-    const data = await fetchData(
-        config.symbolset,
-        config.endpoint
-    );
+    const data = await fetchData(config);
 
     const csv = toCSV(data);
 
@@ -408,12 +501,6 @@ async function exportIndex(indexKey) {
 // =====================
 (async () => {
     try {
-        const INDEXES = [
-            "SPX",
-            "NDX",
-            "SXXP"
-        ];
-
         for (const indexKey of Object.keys(INDEX_CONFIG)) {
             await exportIndex(indexKey);
         }
