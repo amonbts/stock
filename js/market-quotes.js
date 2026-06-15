@@ -37,8 +37,15 @@ function renderWidgets() {
 
   const groups = marketQuotesConfig?.groups || [];
   const filteredWidgets = filterWidgets(marketQuotesConfig?.widgets || []);
+  const selected = typeof getSelectedGroups === 'function'
+    ? getSelectedGroups()
+    : [];
 
-  const symbolsGroups = groups
+  const visibleGroups = selected.length > 0
+    ? selected
+    : groups;
+
+  const symbolsGroups = visibleGroups
     .map((groupName) => {
       const groupSymbols = filteredWidgets
         .filter((widget) => (widget.groups || []).includes(groupName))

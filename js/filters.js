@@ -232,6 +232,11 @@ function filterWidgets(widgets) {
     return widgets;
 }
 
+function getSelectedGroups() {
+
+    return [...selectedGroups];
+}
+
 function updateUrlState() {
 
     const params =
