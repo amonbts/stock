@@ -280,6 +280,8 @@ function renderActiveTabTable() {
         });
       }
 
+      workingRows = getSortedRows(workingRows, activeTab);
+
       renderActiveTabTable();
     });
   });
@@ -399,6 +401,8 @@ function replayPipelineHistory() {
         columnIndex: step.columnIndex,
         direction: step.direction || 'asc'
       };
+
+      workingRows = getSortedRows(workingRows, activeTab);
       continue;
     }
 
