@@ -204,16 +204,6 @@ function renderTabs() {
     button.addEventListener('click', () => {
       activeTabId = button.dataset.tabId;
 
-      if (sortState.tabId !== activeTabId) {
-        sortState = {
-          tabId: activeTabId,
-          columnIndex: null,
-          direction: 'asc'
-        };
-
-        resetPipeline(true);
-      }
-
       renderTabs();
       renderActiveTabTable();
     });
@@ -317,7 +307,9 @@ function applyTopFilter({ recordHistory = true } = {}) {
   const sortedCurrent = getSortedRows(workingRows, activeTab);
   workingRows = sortedCurrent.slice(0, n);
 
-  if (recordHistory) {
+  const hasActiveSort = sortState.tabId === activeTabId && Number.isInteger(sortState.columnIndex);
+
+  if (recordHistory && hasActiveSort) {
     addHistoryEntry({
       type: 'top',
       label: `Top ${n}`,
@@ -354,6 +346,14 @@ function addHistoryEntry(entry) {
   if (
     entry.type === 'sort' &&
     lastEntry?.type === 'sort'
+  ) {
+    pipelineHistory[pipelineHistory.length - 1] = entry;
+    return;
+  }
+
+  if (
+    entry.type === 'top' &&
+    lastEntry?.type === 'top'
   ) {
     pipelineHistory[pipelineHistory.length - 1] = entry;
     return;
