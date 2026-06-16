@@ -1,4 +1,14 @@
 let activeDataPath = '';
+let previousWeek1WByOffset = {
+  1: new Map(),
+  2: new Map(),
+  3: new Map()
+};
+let previousWeekLabelByOffset = {
+  1: 'W-1',
+  2: 'W-2',
+  3: 'W-3'
+};
 
 let screenerRows = [];
 let workingRows = [];
@@ -50,6 +60,9 @@ const TAB_CONFIG = [
       { key: 4, label: 'Price', className: 'text-end', render: (row) => formatNumber(row?.d?.[4]) },
       { key: 12, label: 'Chg %', className: 'text-end', render: (row) => formatPercent(row?.d?.[12]) },
       { key: 27, label: '1W %', className: 'text-end', render: (row) => formatPercent(row?.d?.[27]) },
+  { key: 'prev1w_1', label: '1W % (W-1)', className: 'text-end', render: (row) => formatPercent(getPreviousWeek1W(row, 1)) },
+  { key: 'prev1w_2', label: '1W % (W-2)', className: 'text-end', render: (row) => formatPercent(getPreviousWeek1W(row, 2)) },
+  { key: 'prev1w_3', label: '1W % (W-3)', className: 'text-end', render: (row) => formatPercent(getPreviousWeek1W(row, 3)) },
       { key: 28, label: '1M %', className: 'text-end', render: (row) => formatPercent(row?.d?.[28]) },
       { key: 29, label: '3M %', className: 'text-end', render: (row) => formatPercent(row?.d?.[29]) },
       { key: 30, label: '6M %', className: 'text-end', render: (row) => formatPercent(row?.d?.[30]) },
@@ -119,11 +132,13 @@ async function loadScreener() {
     }
 
     activeDataPath = selectedPath;
-  updateDataSourceLabel(activeDataPath);
+    updateDataSourceLabel(activeDataPath);
 
     const payload = await response.json();
     screenerRows = payload?.data || [];
     workingRows = [...screenerRows];
+    await loadPreviousWeeksPerformance();
+    updatePerformancePreviousWeekLabels();
 
     if (topSelect) {
       topSelect.addEventListener('change', () => {
@@ -147,7 +162,7 @@ async function loadScreener() {
     controls?.classList.remove('d-none');
     document.getElementById('screener-state')?.classList.remove('d-none');
 
-  applyStateFromUrl();
+    applyStateFromUrl();
 
     renderTabs();
     renderActiveTabTable();
@@ -576,19 +591,115 @@ function serializeStepsForUrl(steps) {
     .join(',');
 }
 
+async function loadPreviousWeeksPerformance() {
+  previousWeek1WByOffset = {
+    1: new Map(),
+    2: new Map(),
+    3: new Map()
+  };
+
+  previousWeekLabelByOffset = {
+    1: 'W-1',
+    2: 'W-2',
+    3: 'W-3'
+  };
+
+  for (const offset of [1, 2, 3]) {
+    const weekInfo = getIsoWeekInfoByOffset(offset);
+    const candidates = buildDataPathCandidatesForIsoWeek(weekInfo.year, weekInfo.week);
+    const { response, selectedPath } = await fetchFirstAvailableDataPath(candidates);
+
+    previousWeekLabelByOffset[offset] = getWeekLabelFromPath(selectedPath) || `${weekInfo.year}-${String(weekInfo.week).padStart(2, '0')}`;
+
+    if (!response || !response.ok) {
+      continue;
+    }
+
+    try {
+      const payload = await response.json();
+      const rows = Array.isArray(payload?.data) ? payload.data : [];
+      previousWeek1WByOffset[offset] = new Map(
+        rows
+          .map((row) => {
+            const symbol = row?.s;
+            const value = Number(row?.d?.[27]);
+
+            if (!symbol || !Number.isFinite(value)) {
+              return null;
+            }
+
+            return [symbol, value];
+          })
+          .filter(Boolean)
+      );
+    } catch {
+      // keep empty map for this offset
+    }
+  }
+}
+
+function updatePerformancePreviousWeekLabels() {
+  const performanceTab = TAB_CONFIG.find((tab) => tab.id === 'performance');
+
+  if (!performanceTab) {
+    return;
+  }
+
+  const labels = {
+    prev1w_1: `1W % (${previousWeekLabelByOffset[1] || 'W-1'})`,
+    prev1w_2: `1W % (${previousWeekLabelByOffset[2] || 'W-2'})`,
+    prev1w_3: `1W % (${previousWeekLabelByOffset[3] || 'W-3'})`
+  };
+
+  performanceTab.columns.forEach((column) => {
+    if (labels[column.key]) {
+      column.label = labels[column.key];
+    }
+  });
+}
+
+function getPreviousWeek1W(row, offset) {
+  const symbol = row?.s;
+
+  if (!symbol) {
+    return null;
+  }
+
+  return previousWeek1WByOffset[offset]?.get(symbol);
+}
+
+function getIsoWeekInfoByOffset(weeksOffset) {
+  const shifted = new Date();
+  shifted.setDate(shifted.getDate() - (weeksOffset * 7));
+  return getIsoWeekInfo(shifted);
+}
+
+function getWeekLabelFromPath(path) {
+  if (!path) {
+    return '';
+  }
+
+  const match = String(path).match(/tradingview_CUSTOM_(\d{4}-\d{1,2})\.json/i);
+  return match?.[1] || '';
+}
+
 function buildCurrentDataPathCandidates() {
   const { year, week } = getIsoWeekInfo(new Date());
-  const weekPadded = String(week).padStart(2, '0');
-  const weekRaw = String(week);
-
-  const suffixes = [...new Set([`${year}-${weekRaw}`, `${year}-${weekPadded}`])];
-  const candidates = suffixes.map((suffix) => `./storage/tradingview_CUSTOM_${suffix}.json`);
+  const candidates = buildDataPathCandidatesForIsoWeek(year, week);
 
   return {
     year,
     week,
     candidates
   };
+}
+
+function buildDataPathCandidatesForIsoWeek(year, week) {
+  const weekPadded = String(week).padStart(2, '0');
+  const weekRaw = String(week);
+
+  const suffixes = [...new Set([`${year}-${weekRaw}`, `${year}-${weekPadded}`])];
+  return suffixes.map((suffix) => `./storage/tradingview_CUSTOM_${suffix}.json`);
 }
 
 async function fetchFirstAvailableDataPath(candidates) {
@@ -747,6 +858,18 @@ function getSortedRows(rows, activeTab) {
 function getSortValue(row, column) {
   if (column.key === 'symbol' || column.key === 'ticker') {
     return row?.d?.[1] || row?.s || '';
+  }
+
+  if (column.key === 'prev1w_1') {
+    return getPreviousWeek1W(row, 1);
+  }
+
+  if (column.key === 'prev1w_2') {
+    return getPreviousWeek1W(row, 2);
+  }
+
+  if (column.key === 'prev1w_3') {
+    return getPreviousWeek1W(row, 3);
   }
 
   if (typeof column.key === 'number') {
