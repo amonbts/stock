@@ -1,4 +1,4 @@
-const DATA_PATH = './storage/tradingview_CUSTOM_2026-25.json';
+let activeDataPath = '';
 
 let screenerRows = [];
 let workingRows = [];
@@ -48,7 +48,7 @@ const TAB_CONFIG = [
     columns: [
       { key: 'symbol', label: 'Name', render: renderNameCell },
       { key: 4, label: 'Price', className: 'text-end', render: (row) => formatNumber(row?.d?.[4]) },
-      { key: 12, label: 'Change %', className: 'text-end', render: (row) => formatPercent(row?.d?.[12]) },
+      { key: 12, label: 'Chg %', className: 'text-end', render: (row) => formatPercent(row?.d?.[12]) },
       { key: 27, label: '1W %', className: 'text-end', render: (row) => formatPercent(row?.d?.[27]) },
       { key: 28, label: '1M %', className: 'text-end', render: (row) => formatPercent(row?.d?.[28]) },
       { key: 29, label: '3M %', className: 'text-end', render: (row) => formatPercent(row?.d?.[29]) },
@@ -109,11 +109,17 @@ async function loadScreener() {
   const resetButton = document.getElementById('screener-reset');
 
   try {
-    const response = await fetch(DATA_PATH);
+    const { year, week, candidates } = buildCurrentDataPathCandidates();
+    const { response, selectedPath } = await fetchFirstAvailableDataPath(candidates);
 
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
+    if (!response || !response.ok || !selectedPath) {
+      throw new Error(
+        `Cannot find screener data for ${year}-${week}. Tried: ${candidates.join(', ')}`
+      );
     }
+
+    activeDataPath = selectedPath;
+  updateDataSourceLabel(activeDataPath);
 
     const payload = await response.json();
     screenerRows = payload?.data || [];
@@ -147,11 +153,22 @@ async function loadScreener() {
     renderActiveTabTable();
 
     status.className = 'alert alert-success';
-    status.textContent = `Loaded ${screenerRows.length} rows from ${DATA_PATH}`;
+    status.textContent = `Loaded ${screenerRows.length} rows from ${activeDataPath}`;
   } catch (error) {
+    updateDataSourceLabel('unavailable');
     status.className = 'alert alert-danger';
     status.textContent = `Cannot load screener data: ${error.message}`;
   }
+}
+
+function updateDataSourceLabel(path) {
+  const sourceEl = document.getElementById('screener-data-source');
+
+  if (!sourceEl) {
+    return;
+  }
+
+  sourceEl.textContent = String(path || '(auto)');
 }
 
 function renderTabs() {
@@ -228,7 +245,7 @@ function renderActiveTabTable() {
   `;
 
   if (status && status.classList.contains('alert-success')) {
-    status.textContent = `Loaded ${screenerRows.length} rows from ${DATA_PATH} · working set: ${workingRows.length} · showing ${visibleRows.length}`;
+    status.textContent = `Loaded ${screenerRows.length} rows from ${activeDataPath} · working set: ${workingRows.length} · showing ${visibleRows.length}`;
   }
 
   renderStatePanel(visibleRows.length);
@@ -557,6 +574,59 @@ function serializeStepsForUrl(steps) {
     })
     .filter(Boolean)
     .join(',');
+}
+
+function buildCurrentDataPathCandidates() {
+  const { year, week } = getIsoWeekInfo(new Date());
+  const weekPadded = String(week).padStart(2, '0');
+  const weekRaw = String(week);
+
+  const suffixes = [...new Set([`${year}-${weekRaw}`, `${year}-${weekPadded}`])];
+  const candidates = suffixes.map((suffix) => `./storage/tradingview_CUSTOM_${suffix}.json`);
+
+  return {
+    year,
+    week,
+    candidates
+  };
+}
+
+async function fetchFirstAvailableDataPath(candidates) {
+  for (const path of candidates) {
+    try {
+      const response = await fetch(path, { cache: 'no-store' });
+
+      if (response.ok) {
+        return {
+          response,
+          selectedPath: path
+        };
+      }
+    } catch {
+      // try next candidate
+    }
+  }
+
+  return {
+    response: null,
+    selectedPath: ''
+  };
+}
+
+function getIsoWeekInfo(date) {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const day = d.getUTCDay() || 7;
+
+  d.setUTCDate(d.getUTCDate() + 4 - day);
+
+  const year = d.getUTCFullYear();
+  const yearStart = new Date(Date.UTC(year, 0, 1));
+  const week = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+
+  return {
+    year,
+    week
+  };
 }
 
 function renderStatePanel(visibleCount = null) {
