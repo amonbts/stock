@@ -34,27 +34,27 @@ axiosRetry(axios, {
 // CONFIG: INDEX MAP
 // =====================
 const INDEX_CONFIG = {
-    SPX: {
-        symbols: {
-            symbolset: ["SYML:SP;SPX"]
-        },
-        endpoint: "america",
-        range: [0, 500],
-    },
-    NDX: {
-        symbols: {
-            symbolset: ["SYML:NASDAQ;NDX"],
-        },
-        endpoint: "america",
-        range: [0, 500],
-    },
-    SXXP: {
-        symbols: {
-            symbolset: ["SYML:TVC;SXXP"],
-        },
-        endpoint: "global",
-        range: [0, 500],
-    },
+    // SPX: {
+    //     symbols: {
+    //         symbolset: ["SYML:SP;SPX"]
+    //     },
+    //     endpoint: "america",
+    //     range: [0, 500],
+    // },
+    // NDX: {
+    //     symbols: {
+    //         symbolset: ["SYML:NASDAQ;NDX"],
+    //     },
+    //     endpoint: "america",
+    //     range: [0, 500],
+    // },
+    // SXXP: {
+    //     symbols: {
+    //         symbolset: ["SYML:TVC;SXXP"],
+    //     },
+    //     endpoint: "global",
+    //     range: [0, 500],
+    // },
     CUSTOM: {
         symbols: {
             symbolset: ["SYML:NASDAQ;SOX", "SYML:SP;SPX", "SYML:NASDAQ;NDX", "SYML:TVC;SXXP"],
@@ -260,11 +260,6 @@ const COLUMNS = [
     // "RSI"
 ];
 
-const EXTRA_COLUMNS = [
-    "trend_score",
-    "trend_label",
-    "rsi_state"
-];
 
 // =====================
 // API FETCH (PRO)
@@ -313,81 +308,6 @@ async function fetchData(config) {
 }
 
 // =====================
-// TREND ENGINE
-// =====================
-function calculateTrendScore(row) {
-    const [
-        tickerView,
-        name,
-        description,
-        exchange,
-        close,
-        currency,
-        change,
-        perfW,
-        perf1M,
-        perf3M,
-        perf6M,
-        perfYTD,
-        perfY,
-        perf5Y,
-        perf10Y,
-        perfAll,
-        volW,
-        volM,
-        sma10,
-        sma30,
-        sma50,
-        sma100,
-        sma200,
-        rsi
-    ] = row;
-
-    const c = Number(close);
-    const s10 = Number(sma10);
-    const s50 = Number(sma50);
-    const s100 = Number(sma100);
-    const s200 = Number(sma200);
-    const r = Number(rsi);
-
-    let score = 0;
-
-    // trend structure
-    if (s10 > s50) score++;
-    if (s50 > s100) score++;
-    if (s100 > s200) score++;
-
-    // price confirmation
-    if (c > s10) score++;
-    if (c > s50) score++;
-    if (c > s200) score++;
-
-    // RSI quality filter
-    if (r > 40 && r < 70) score++;
-
-    return score;
-}
-
-function getTrendLabel(score) {
-    if (score >= 6) return "STRONG_UP";
-    if (score >= 4) return "UP";
-    if (score >= 2) return "SIDEWAYS";
-
-    return "DOWN";
-}
-
-function getRSIState(rsi) {
-    const r = Number(rsi);
-
-    if (isNaN(r)) return "";
-
-    if (r >= 70) return "OVERBOUGHT";
-    if (r <= 30) return "OVERSOLD";
-
-    return "NEUTRAL";
-}
-
-// =====================
 // CSV BUILDER
 // =====================
 function toCSV(response) {
@@ -397,16 +317,6 @@ function toCSV(response) {
         throw new Error("Invalid API response: missing data array");
     }
 
-    // rows.sort((a, b) => {
-    //     const scoreA = calculateTrendScore(a.d);
-    //     const scoreB = calculateTrendScore(b.d);
-
-    //     return scoreB - scoreA;
-    // });
-
-    // const header = [...COLUMNS, ...EXTRA_COLUMNS]
-    //     .map(escapeCSV)
-    //     .join(',');
     const header = [...COLUMNS]
         .map(escapeCSV)
         .join(',');
@@ -414,21 +324,12 @@ function toCSV(response) {
     const csvRows = rows.map((row) => {
         if (!row.d) return '';
 
-        // const trendScore = calculateTrendScore(row.d);
-
         const cleaned = row.d.map((cell) =>
             formatNumber(clean(cell))
         );
-        // const trendLabel = getTrendLabel(trendScore);
-        // const rsiState = getRSIState(
-        //     cleaned[cleaned.length - 1]
-        // );
 
         return [
             ...cleaned,
-            // trendScore,
-            // trendLabel,
-            // rsiState
         ]
             .map(escapeCSV)
             .join(',');
