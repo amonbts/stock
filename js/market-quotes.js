@@ -174,6 +174,27 @@ function formatPremarketPct(value) {
   return `${Number(value).toFixed(2)}%`;
 }
 
+function formatSnapshotDateTime(isoString) {
+  if (!isoString) {
+    return 'unknown';
+  }
+
+  const date = new Date(isoString);
+
+  if (Number.isNaN(date.getTime())) {
+    return 'unknown';
+  }
+
+  return date.toLocaleString(undefined, {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+  });
+}
+
 function getTradingViewLogoUrl(row) {
   const logoid = (row?.logoid || '').toLowerCase();
 
@@ -301,6 +322,7 @@ async function renderPremarketPanel(panel, filteredWidgets) {
     const premarketStateText = isPremarketLive
       ? 'Live pre-market'
       : 'Outside pre-market hours';
+    const snapshotDateTime = formatSnapshotDateTime(snapshot?.generatedAt);
     const premarketCollapseId = 'premarket-table-collapse';
     const premarketExpandedClass = isPremarketLive ? 'show' : '';
     const premarketExpandedAria = isPremarketLive ? 'true' : 'false';
@@ -321,7 +343,7 @@ async function renderPremarketPanel(panel, filteredWidgets) {
           <div class="d-flex justify-content-between align-items-center mb-2">
             <h5 class="mb-0">Pre-market (top movers)</h5>
             <div class="d-flex align-items-center gap-2">
-              <small class="text-body-secondary">US symbols only · snapshot · ${premarketStateText}</small>
+              <small class="text-body-secondary">US symbols only · snapshot · ${premarketStateText} · fetched: ${snapshotDateTime}</small>
               <button
                 class="btn btn-sm btn-outline-secondary"
                 type="button"
