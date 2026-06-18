@@ -242,6 +242,13 @@
         "XTB",
         "ETFs"
       ]
-    }
+    },
+    {
+      "symbol": "NASDAQ:ARM",
+      "groups": [
+        "XTB",
+        "Stocks"
+      ]
+    }    
   ]
 }
