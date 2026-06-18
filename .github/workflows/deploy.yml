@@ -6,9 +6,9 @@ on:
     branches:
       - main
   schedule:
-    # Weekdays, every 15 minutes during premarket window (UTC).
-    # Covers US premarket across DST shifts: approx 08:00-14:45 UTC.
-    - cron: "*/15 8-14 * * 1-5"
+    # Weekdays, every 15 minutes in UTC from 08:00 to 13:30.
+    - cron: "*/15 8-12 * * 1-5"
+    - cron: "0,15,30 13 * * 1-5"
 
 permissions:
   contents: read
