@@ -6,10 +6,11 @@ on:
     branches:
       - main
   schedule:
-    # Weekdays, every 15 minutes in UTC from 08:00 to 13:30.
-    - cron: "*/15 4-8 * * 1-5"
+    # Weekdays, every ~15 minutes in America/New_York from 04:00 to 09:30.
+    # Safer minutes to reduce GitHub scheduler drop risk around :00.
+    - cron: "2,17,32,47 4-8 * * 1-5"
       timezone: "America/New_York"
-    - cron: "0,15,30 9 * * 1-5"
+    - cron: "2,17,30 9 * * 1-5"
       timezone: "America/New_York"
 
 permissions:
