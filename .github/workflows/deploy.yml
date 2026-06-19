@@ -7,8 +7,10 @@ on:
       - main
   schedule:
     # Weekdays, every 15 minutes in UTC from 08:00 to 13:30.
-    - cron: "*/15 8-16 * * 1-5"
-    - cron: "0,15,30 17 * * 1-5"
+    - cron: "*/15 4-8 * * 1-5"
+      timezone: "America/New_York"
+    - cron: "0,15,30 9 * * 1-5"
+      timezone: "America/New_York"
 
 permissions:
   contents: read
