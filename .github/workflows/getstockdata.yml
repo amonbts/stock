@@ -3,10 +3,10 @@ name: Get Table Data
 on:
   workflow_dispatch:
   schedule:
-    - cron: "8 9 * * 0-6"
-      timezone: "America/New_York"
     - cron: "8 15 * * 0-6"
-      timezone: "America/New_York"
+      timezone: "Europe/Warsaw"
+    - cron: "8 21 * * 0-6"
+      timezone: "Europe/Warsaw"
 
 permissions:
   contents: write
