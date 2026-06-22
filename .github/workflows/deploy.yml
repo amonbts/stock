@@ -5,13 +5,13 @@ on:
   push:
     branches:
       - main
-  schedule:
-    # Weekdays, every ~15 minutes in Europe/Warsaw from 10:00 to 15:30
-    # (same real execution moments as previous America/New_York 04:00-09:30).
-    - cron: "2,17,32,47 10-14 * * 1-5"
-      timezone: "Europe/Warsaw"
-    - cron: "2,17,32 15 * * 1-5"
-      timezone: "Europe/Warsaw"
+  # schedule:
+  #   # Weekdays, every ~15 minutes in Europe/Warsaw from 10:00 to 15:30
+  #   # (same real execution moments as previous America/New_York 04:00-09:30).
+  #   - cron: "2,17,32,47 10-14 * * 1-5"
+  #     timezone: "Europe/Warsaw"
+  #   - cron: "2,17,32 15 * * 1-5"
+  #     timezone: "Europe/Warsaw"
 
 permissions:
   contents: read
