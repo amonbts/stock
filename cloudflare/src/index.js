@@ -36,11 +36,17 @@ export default {
 	// },
 	async scheduled(event, env, ctx) {
 		const url = "https://api.github.com/repos/amonbts/stock/actions/workflows/deploy.yml/dispatches";
+		const userAgent = env.GITHUB_USER_AGENT || "stock-cloudflare-scheduler/1.0";
+
+		if (!env.GITHUB_TOKEN) {
+			throw new Error("Missing GITHUB_TOKEN secret in Worker environment");
+		}
 
 		const res = await fetch(url, {
 		method: "POST",
 		headers: {
 			"Authorization": `Bearer ${env.GITHUB_TOKEN}`,
+			"User-Agent": userAgent,
 			"Accept": "application/vnd.github+json",
 			"X-GitHub-Api-Version": "2022-11-28",
 			"Content-Type": "application/json"
@@ -52,7 +58,8 @@ export default {
 
 		if (!res.ok) {
 		const body = await res.text();
-		console.error("GitHub dispatch failed:", res.status, body);
+		const reqId = res.headers.get("x-github-request-id");
+		console.error("GitHub dispatch failed:", res.status, { reqId, body });
 		throw new Error(`Dispatch failed: ${res.status}`);
 		}
 
