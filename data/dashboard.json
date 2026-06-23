@@ -249,6 +249,13 @@
         "XTB",
         "Stocks"
       ]
+    },
+    {
+      "symbol": "NASDAQ-ALAB",
+      "groups": [
+        "XTB",
+        "Stocks"
+      ]
     }    
   ]
 }
