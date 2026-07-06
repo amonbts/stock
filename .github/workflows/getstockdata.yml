@@ -1,4 +1,4 @@
-name: Get Table Data
+name: Get Screener Data
 
 on:
   workflow_dispatch:
