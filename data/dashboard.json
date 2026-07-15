@@ -256,6 +256,13 @@
         "XTB",
         "Stocks"
       ]
+    },
+    {
+      "symbol": "NASDAQ-SKHY",
+      "groups": [
+        "New",
+        "Stocks"
+      ]
     }    
   ]
 }
