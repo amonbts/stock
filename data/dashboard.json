@@ -24,6 +24,7 @@
     {
       "symbol": "NASDAQ:META",
       "groups": [
+        "New",
         "Stocks",
         "BossaG"
       ]
@@ -263,6 +264,27 @@
         "New",
         "Stocks"
       ]
-    }    
+    },
+    {
+      "symbol": "NASDAQ:MSFT",
+      "groups": [
+        "New",
+        "Stocks"
+      ]
+    },
+    {
+      "symbol": "NASDAQ:ORCL",
+      "groups": [
+        "New",
+        "Stocks"
+      ]
+    },
+    {
+      "symbol": "EURONEXT:BESI",
+      "groups": [
+        "New",
+        "Stocks"
+      ]
+    }   
   ]
 }
