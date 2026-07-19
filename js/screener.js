@@ -80,9 +80,9 @@ const TAB_CONFIG = [
     label: 'Technical',
     columns: [
       { key: 'symbol', label: 'Name', render: renderNameCell },
-      { key: 38, label: 'Tech Rating', render: (row) => escapeHtml(String(row?.d?.[38] ?? '—')) },
-      { key: 40, label: 'MA Rating', render: (row) => escapeHtml(String(row?.d?.[40] ?? '—')) },
-      { key: 42, label: 'Osc Rating', render: (row) => escapeHtml(String(row?.d?.[42] ?? '—')) },
+      { key: 38, label: 'Tech Rating', render: (row) => formatTechnicalRating(row?.d?.[38]) },
+      { key: 40, label: 'MA Rating', render: (row) => formatTechnicalRating(row?.d?.[40]) },
+      { key: 42, label: 'Osc Rating', render: (row) => formatTechnicalRating(row?.d?.[42]) },
       { key: 44, label: 'RSI', className: 'text-end', render: (row) => formatNumber(row?.d?.[44]) },
       { key: 45, label: 'Momentum', className: 'text-end', render: (row) => formatNumber(row?.d?.[45]) },
       { key: 47, label: 'CCI20', className: 'text-end', render: (row) => formatNumber(row?.d?.[47]) }
@@ -919,6 +919,24 @@ function formatPercent(value) {
   const text = `${num.toFixed(2)}%`;
 
   return `<span class="${signClass}">${text}</span>`;
+}
+
+function formatTechnicalRating(value) {
+  const raw = String(value ?? '—');
+  const normalized = raw
+    .toUpperCase()
+    .replace(/\s+/g, '')
+    .replace(/[_-]/g, '');
+
+  if (normalized === 'BUY' || normalized === 'STRONGBUY') {
+    return `<span class="text-success fw-semibold">${escapeHtml(raw)}</span>`;
+  }
+
+  if (normalized === 'SELL' || normalized === 'STRONGSELL') {
+    return `<span class="text-danger fw-semibold">${escapeHtml(raw)}</span>`;
+  }
+
+  return escapeHtml(raw);
 }
 
 function formatLargeNumber(value) {
