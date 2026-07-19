@@ -86,11 +86,11 @@ const TAB_CONFIG = [
       { key: 44, label: 'RSI', className: 'text-end', render: (row) => formatNumber(row?.d?.[44]) },
       { key: 45, label: 'Momentum', className: 'text-end', render: (row) => formatNumber(row?.d?.[45]) },
       { key: 47, label: 'CCI20', className: 'text-end', render: (row) => formatNumber(row?.d?.[47]) },
-      { key: 73, label: 'SMA10', className: 'text-end', render: (row) => formatNumber(row?.d?.[73]) },
-      { key: 74, label: 'SMA30', className: 'text-end', render: (row) => formatNumber(row?.d?.[74]) },
-      { key: 75, label: 'SMA50', className: 'text-end', render: (row) => formatNumber(row?.d?.[75]) },
-      { key: 76, label: 'SMA100', className: 'text-end', render: (row) => formatNumber(row?.d?.[76]) },
-      { key: 77, label: 'SMA200', className: 'text-end', render: (row) => formatNumber(row?.d?.[77]) }
+  { key: 73, label: 'SMA10', className: 'text-end', render: (row) => formatSmaVsPrice(row, 73) },
+  { key: 74, label: 'SMA30', className: 'text-end', render: (row) => formatSmaVsPrice(row, 74) },
+  { key: 75, label: 'SMA50', className: 'text-end', render: (row) => formatSmaVsPrice(row, 75) },
+  { key: 76, label: 'SMA100', className: 'text-end', render: (row) => formatSmaVsPrice(row, 76) },
+  { key: 77, label: 'SMA200', className: 'text-end', render: (row) => formatSmaVsPrice(row, 77) }
     ]
   },
   {
@@ -942,6 +942,34 @@ function formatTechnicalRating(value) {
   }
 
   return escapeHtml(raw);
+}
+
+function formatSmaVsPrice(row, smaIndex) {
+  const smaValue = row?.d?.[smaIndex];
+  const priceValue = row?.d?.[4];
+
+  const sma = Number(smaValue);
+  const price = Number(priceValue);
+
+  if (!Number.isFinite(sma)) {
+    return '—';
+  }
+
+  const formatted = formatNumber(sma);
+
+  if (!Number.isFinite(price)) {
+    return formatted;
+  }
+
+  if (sma > price) {
+    return `<span class="text-success">${formatted}</span>`;
+  }
+
+  if (sma < price) {
+    return `<span class="text-danger">${formatted}</span>`;
+  }
+
+  return formatted;
 }
 
 function formatLargeNumber(value) {
