@@ -80,12 +80,12 @@ const TAB_CONFIG = [
     label: 'Technical',
     columns: [
       { key: 'symbol', label: 'Name', render: renderNameCell },
-      { key: 40, label: 'Tech Rating', render: (row) => escapeHtml(String(row?.d?.[40] ?? '—')) },
-      { key: 42, label: 'MA Rating', render: (row) => escapeHtml(String(row?.d?.[42] ?? '—')) },
-      { key: 44, label: 'Osc Rating', render: (row) => escapeHtml(String(row?.d?.[44] ?? '—')) },
-      { key: 45, label: 'RSI', className: 'text-end', render: (row) => formatNumber(row?.d?.[45]) },
-      { key: 46, label: 'Momentum', className: 'text-end', render: (row) => formatNumber(row?.d?.[46]) },
-      { key: 48, label: 'CCI20', className: 'text-end', render: (row) => formatNumber(row?.d?.[48]) }
+      { key: 38, label: 'Tech Rating', render: (row) => escapeHtml(String(row?.d?.[38] ?? '—')) },
+      { key: 40, label: 'MA Rating', render: (row) => escapeHtml(String(row?.d?.[40] ?? '—')) },
+      { key: 42, label: 'Osc Rating', render: (row) => escapeHtml(String(row?.d?.[42] ?? '—')) },
+      { key: 44, label: 'RSI', className: 'text-end', render: (row) => formatNumber(row?.d?.[44]) },
+      { key: 45, label: 'Momentum', className: 'text-end', render: (row) => formatNumber(row?.d?.[45]) },
+      { key: 47, label: 'CCI20', className: 'text-end', render: (row) => formatNumber(row?.d?.[47]) }
     ]
   },
   {
