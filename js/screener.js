@@ -85,7 +85,12 @@ const TAB_CONFIG = [
       { key: 42, label: 'Osc Rating', render: (row) => formatTechnicalRating(row?.d?.[42]) },
       { key: 44, label: 'RSI', className: 'text-end', render: (row) => formatNumber(row?.d?.[44]) },
       { key: 45, label: 'Momentum', className: 'text-end', render: (row) => formatNumber(row?.d?.[45]) },
-      { key: 47, label: 'CCI20', className: 'text-end', render: (row) => formatNumber(row?.d?.[47]) }
+      { key: 47, label: 'CCI20', className: 'text-end', render: (row) => formatNumber(row?.d?.[47]) },
+      { key: 73, label: 'SMA10', className: 'text-end', render: (row) => formatNumber(row?.d?.[73]) },
+      { key: 74, label: 'SMA30', className: 'text-end', render: (row) => formatNumber(row?.d?.[74]) },
+      { key: 75, label: 'SMA50', className: 'text-end', render: (row) => formatNumber(row?.d?.[75]) },
+      { key: 76, label: 'SMA100', className: 'text-end', render: (row) => formatNumber(row?.d?.[76]) },
+      { key: 77, label: 'SMA200', className: 'text-end', render: (row) => formatNumber(row?.d?.[77]) }
     ]
   },
   {
