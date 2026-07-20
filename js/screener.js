@@ -82,6 +82,7 @@ const TAB_CONFIG = [
     label: 'Technical',
     columns: [
       { key: 'symbol', label: 'Name', render: renderNameCell },
+      { key: 4, label: 'Price', className: 'text-end', render: (row) => formatNumber(row?.d?.[4]) },
       { key: 38, label: 'Tech Rating', render: (row) => formatTechnicalRating(row?.d?.[38]) },
       { key: 40, label: 'MA Rating', render: (row) => formatTechnicalRating(row?.d?.[40]) },
       { key: 42, label: 'Osc Rating', render: (row) => formatTechnicalRating(row?.d?.[42]) },
