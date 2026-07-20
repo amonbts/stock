@@ -9,6 +9,8 @@ let previousWeekLabelByOffset = {
   2: 'W-2',
   3: 'W-3'
 };
+let selectedStocksOnly = false;
+let selectedStockSymbols = new Set();
 
 let screenerRows = [];
 let workingRows = [];
@@ -123,6 +125,7 @@ async function loadScreener() {
   const status = document.getElementById('screener-status');
   const controls = document.getElementById('screener-controls');
   const topSelect = document.getElementById('top-n-select');
+  const selectedStocksOnlyToggle = document.getElementById('selected-stocks-only');
   const undoButton = document.getElementById('screener-undo');
   const resetButton = document.getElementById('screener-reset');
 
@@ -141,7 +144,8 @@ async function loadScreener() {
 
     const payload = await response.json();
     screenerRows = payload?.data || [];
-    workingRows = [...screenerRows];
+  await loadSelectedStockSymbols();
+  workingRows = getSourceRows();
     await loadPreviousWeeksPerformance();
     updatePerformancePreviousWeekLabels();
 
@@ -155,6 +159,27 @@ async function loadScreener() {
     if (undoButton) {
       undoButton.addEventListener('click', () => {
         undoLastStep();
+      });
+    }
+
+    if (selectedStocksOnlyToggle) {
+      selectedStocksOnlyToggle.addEventListener('change', () => {
+        selectedStocksOnly = selectedStocksOnlyToggle.checked;
+
+        if (pipelineHistory.length > 0) {
+          replayPipelineHistory();
+          renderActiveTabTable();
+          return;
+        }
+
+        workingRows = getSourceRows();
+
+        if (rowLimit !== 'all') {
+          applyTopFilter({ recordHistory: false });
+          return;
+        }
+
+        renderActiveTabTable();
       });
     }
 
@@ -189,6 +214,39 @@ function updateDataSourceLabel(path) {
   }
 
   sourceEl.textContent = String(path || '(auto)');
+}
+
+async function loadSelectedStockSymbols() {
+  selectedStockSymbols = new Set();
+
+  try {
+    const response = await fetch('./generated/dashboard.json', { cache: 'no-store' });
+
+    if (!response.ok) {
+      return;
+    }
+
+    const dashboard = await response.json();
+    const symbols = (dashboard?.widgets || [])
+      .map((widget) => widget?.symbol)
+      .filter(Boolean);
+
+    selectedStockSymbols = new Set(symbols);
+  } catch {
+    // ignore: selected-stocks filter will fallback to full list
+  }
+}
+
+function getSourceRows() {
+  if (!selectedStocksOnly) {
+    return [...screenerRows];
+  }
+
+  if (!selectedStockSymbols.size) {
+    return [...screenerRows];
+  }
+
+  return screenerRows.filter((row) => selectedStockSymbols.has(row?.s));
 }
 
 function renderTabs() {
@@ -328,7 +386,7 @@ function applyTopFilter({ recordHistory = true } = {}) {
 }
 
 function resetPipeline(silent = false) {
-  workingRows = [...screenerRows];
+  workingRows = getSourceRows();
   rowLimit = 'all';
   pipelineHistory = [];
 
@@ -392,7 +450,7 @@ function undoLastStep() {
 
 function replayPipelineHistory() {
   const activeTab = TAB_CONFIG.find((tab) => tab.id === activeTabId);
-  workingRows = [...screenerRows];
+  workingRows = getSourceRows();
   rowLimit = 'all';
 
   if (!activeTab) {
@@ -445,7 +503,7 @@ function applyStateFromUrl() {
   };
   pipelineHistory = [];
   rowLimit = 'all';
-  workingRows = [...screenerRows];
+  workingRows = getSourceRows();
 
   if (!activeTab) {
     return;
@@ -761,12 +819,15 @@ function renderStatePanel(visibleCount = null) {
   const sortLabel = getCurrentSortLabel(activeTab);
   const displayVisibleCount = Number.isFinite(visibleCount) ? visibleCount : workingRows.length;
   const topLabel = rowLimit === 'all' ? 'All rows' : `Top ${rowLimit}`;
+  const sourceRows = getSourceRows();
+  const universeLabel = selectedStocksOnly ? 'Selected stocks' : 'All stocks';
 
   summaryRoot.innerHTML = [
     `<strong>Tab:</strong> ${escapeHtml(activeTab.label)}`,
+    `<strong>Universe:</strong> ${escapeHtml(universeLabel)}`,
     `<strong>Sort:</strong> ${escapeHtml(sortLabel)}`,
     `<strong>Scope:</strong> ${escapeHtml(topLabel)}`,
-    `<strong>Rows:</strong> ${workingRows.length}/${screenerRows.length} (showing ${displayVisibleCount})`
+    `<strong>Rows:</strong> ${workingRows.length}/${sourceRows.length} (showing ${displayVisibleCount})`
   ].join(' &nbsp;•&nbsp; ');
 
   if (pipelineHistory.length === 0) {
