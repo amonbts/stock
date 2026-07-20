@@ -9,7 +9,7 @@
     "Binnance",
     "ETFs",
     "Stocks",
-    "New",
+    "Watching",
     "Indexes",
     "Old"
   ],
@@ -24,7 +24,7 @@
     {
       "symbol": "NASDAQ:META",
       "groups": [
-        "New",
+        "Watching",
         "Stocks",
         "BossaG"
       ]
@@ -261,30 +261,37 @@
     {
       "symbol": "NASDAQ:SKHY",
       "groups": [
-        "New",
+        "Watching",
         "Stocks"
       ]
     },
     {
       "symbol": "NASDAQ:MSFT",
       "groups": [
-        "New",
+        "Watching",
         "Stocks"
       ]
     },
     {
       "symbol": "NYSE:ORCL",
       "groups": [
-        "New",
+        "Watching",
         "Stocks"
       ]
     },
     {
       "symbol": "XETR:BSI",
       "groups": [
-        "New",
+        "Watching",
         "Stocks"
       ]
-    }   
+    },
+    {
+      "symbol": "NASDAQ:AMAT",
+      "groups": [
+        "Watching",
+        "Stocks"
+      ]
+    }
   ]
 }
