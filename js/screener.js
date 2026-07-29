@@ -1024,11 +1024,11 @@ function formatSmaVsPrice(row, smaIndex) {
   }
 
   if (sma > price) {
-    return `<span class="text-success">${formatted}</span>`;
+    return `<span class="text-danger">${formatted}</span>`;
   }
 
   if (sma < price) {
-    return `<span class="text-danger">${formatted}</span>`;
+    return `<span class="text-success">${formatted}</span>`;
   }
 
   return formatted;
