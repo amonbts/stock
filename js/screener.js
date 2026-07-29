@@ -103,8 +103,11 @@ const TAB_CONFIG = [
       { key: 'symbol', label: 'Name', render: renderNameCell },
       { key: 4, label: 'Price', className: 'text-end', render: (row) => formatNumber(row?.d?.[4]) },
       { key: 78, label: 'Price Target Avg', className: 'text-end', render: (row) => formatNumber(row?.d?.[78]) },
+      { key: 'price_target_avg_pct', label: 'Price Target Avg %', className: 'text-end', render: (row) => formatPercent(getPriceTargetPercentByIndex(row, 78)) },
       { key: 79, label: 'Price Target High', className: 'text-end', render: (row) => formatNumber(row?.d?.[79]) },
+      { key: 'price_target_high_pct', label: 'Price Target High %', className: 'text-end', render: (row) => formatPercent(getPriceTargetPercentByIndex(row, 79)) },
       { key: 80, label: 'Price Target Low', className: 'text-end', render: (row) => formatNumber(row?.d?.[80]) },
+      { key: 'price_target_low_pct', label: 'Price Target Low %', className: 'text-end', render: (row) => formatPercent(getPriceTargetPercentByIndex(row, 80)) },
       { key: 81, label: 'Price Target Median', className: 'text-end', render: (row) => formatNumber(row?.d?.[81]) },
       { key: 82, label: 'EPS Forecast (Next FY)', className: 'text-end', render: (row) => formatNumber(row?.d?.[82]) },
       { key: 83, label: 'EPS Forecast (FQ)', className: 'text-end', render: (row) => formatNumber(row?.d?.[83]) },
@@ -949,6 +952,18 @@ function getSortValue(row, column) {
     return row?.d?.[1] || row?.s || '';
   }
 
+  if (column.key === 'price_target_avg_pct') {
+    return getPriceTargetPercentByIndex(row, 78);
+  }
+
+  if (column.key === 'price_target_high_pct') {
+    return getPriceTargetPercentByIndex(row, 79);
+  }
+
+  if (column.key === 'price_target_low_pct') {
+    return getPriceTargetPercentByIndex(row, 80);
+  }
+
   if (column.key === 'prev1w_1') {
     return getPreviousWeek1W(row, 1);
   }
@@ -966,6 +981,17 @@ function getSortValue(row, column) {
   }
 
   return '';
+}
+
+function getPriceTargetPercentByIndex(row, targetIndex) {
+  const price = Number(row?.d?.[4]);
+  const targetValue = Number(row?.d?.[targetIndex]);
+
+  if (!Number.isFinite(price) || !Number.isFinite(targetValue) || price === 0) {
+    return null;
+  }
+
+  return ((targetValue - price) / price) * 100;
 }
 
 function formatNumber(value) {
