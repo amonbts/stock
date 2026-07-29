@@ -97,6 +97,25 @@ const TAB_CONFIG = [
     ]
   },
   {
+    id: 'forecast',
+    label: 'Forecast',
+    columns: [
+      { key: 'symbol', label: 'Name', render: renderNameCell },
+      { key: 4, label: 'Price', className: 'text-end', render: (row) => formatNumber(row?.d?.[4]) },
+      { key: 78, label: 'EPS Estimate (Next FQ)', className: 'text-end', render: (row) => formatNumber(row?.d?.[78]) },
+      { key: 79, label: 'Revenue Estimate (Next FQ)', className: 'text-end', render: (row) => formatLargeNumber(row?.d?.[79]) },
+      { key: 80, label: 'Price Target Avg', className: 'text-end', render: (row) => formatNumber(row?.d?.[80]) },
+      { key: 81, label: 'Price Target High', className: 'text-end', render: (row) => formatNumber(row?.d?.[81]) },
+      { key: 82, label: 'Price Target Low', className: 'text-end', render: (row) => formatNumber(row?.d?.[82]) },
+      { key: 83, label: 'Price Target Median', className: 'text-end', render: (row) => formatNumber(row?.d?.[83]) },
+      { key: 84, label: 'EPS Forecast (Next FQ)', className: 'text-end', render: (row) => formatNumber(row?.d?.[84]) },
+      { key: 85, label: 'EPS Forecast (FQ)', className: 'text-end', render: (row) => formatNumber(row?.d?.[85]) },
+      { key: 86, label: 'EPS Forecast (FY)', className: 'text-end', render: (row) => formatNumber(row?.d?.[86]) },
+      { key: 87, label: 'Revenue Forecast (Next FQ)', className: 'text-end', render: (row) => formatLargeNumber(row?.d?.[87]) },
+      { key: 88, label: 'Revenue Forecast (FY)', className: 'text-end', render: (row) => formatLargeNumber(row?.d?.[88]) }
+    ]
+  },
+  {
     id: 'extended',
     label: 'Extended Hours',
     columns: [
