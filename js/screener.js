@@ -51,7 +51,7 @@ const TAB_CONFIG = [
       { key: 23, label: 'Sector', render: (row) => escapeHtml(String(row?.d?.[23] ?? '—')) },
       { key: 25, label: 'Analyst rating', render: (row) => escapeHtml(String(row?.d?.[25] ?? row?.d?.[24] ?? '—')) },
       { key: 13, label: 'Volume', className: 'text-end', render: (row) => formatInteger(row?.d?.[13]) }
-      
+
     ]
   },
   {
@@ -62,9 +62,9 @@ const TAB_CONFIG = [
       { key: 4, label: 'Price', className: 'text-end', render: (row) => formatNumber(row?.d?.[4]) },
       { key: 12, label: 'Chg %', className: 'text-end', render: (row) => formatPercent(row?.d?.[12]) },
       { key: 27, label: '1W %', className: 'text-end', render: (row) => formatPercent(row?.d?.[27]) },
-  { key: 'prev1w_1', label: '1W % (W-1)', className: 'text-end', render: (row) => formatPercent(getPreviousWeek1W(row, 1)) },
-  { key: 'prev1w_2', label: '1W % (W-2)', className: 'text-end', render: (row) => formatPercent(getPreviousWeek1W(row, 2)) },
-  { key: 'prev1w_3', label: '1W % (W-3)', className: 'text-end', render: (row) => formatPercent(getPreviousWeek1W(row, 3)) },
+      { key: 'prev1w_1', label: '1W % (W-1)', className: 'text-end', render: (row) => formatPercent(getPreviousWeek1W(row, 1)) },
+      { key: 'prev1w_2', label: '1W % (W-2)', className: 'text-end', render: (row) => formatPercent(getPreviousWeek1W(row, 2)) },
+      { key: 'prev1w_3', label: '1W % (W-3)', className: 'text-end', render: (row) => formatPercent(getPreviousWeek1W(row, 3)) },
       { key: 28, label: '1M %', className: 'text-end', render: (row) => formatPercent(row?.d?.[28]) },
       { key: 29, label: '3M %', className: 'text-end', render: (row) => formatPercent(row?.d?.[29]) },
       { key: 30, label: '6M %', className: 'text-end', render: (row) => formatPercent(row?.d?.[30]) },
@@ -89,11 +89,11 @@ const TAB_CONFIG = [
       { key: 44, label: 'RSI', className: 'text-end', render: (row) => formatNumber(row?.d?.[44]) },
       { key: 45, label: 'Momentum', className: 'text-end', render: (row) => formatNumber(row?.d?.[45]) },
       { key: 47, label: 'CCI20', className: 'text-end', render: (row) => formatNumber(row?.d?.[47]) },
-  { key: 73, label: 'SMA10', className: 'text-end', render: (row) => formatSmaVsPrice(row, 73) },
-  { key: 74, label: 'SMA30', className: 'text-end', render: (row) => formatSmaVsPrice(row, 74) },
-  { key: 75, label: 'SMA50', className: 'text-end', render: (row) => formatSmaVsPrice(row, 75) },
-  { key: 76, label: 'SMA100', className: 'text-end', render: (row) => formatSmaVsPrice(row, 76) },
-  { key: 77, label: 'SMA200', className: 'text-end', render: (row) => formatSmaVsPrice(row, 77) }
+      { key: 73, label: 'SMA10', className: 'text-end', render: (row) => formatSmaVsPrice(row, 73) },
+      { key: 74, label: 'SMA30', className: 'text-end', render: (row) => formatSmaVsPrice(row, 74) },
+      { key: 75, label: 'SMA50', className: 'text-end', render: (row) => formatSmaVsPrice(row, 75) },
+      { key: 76, label: 'SMA100', className: 'text-end', render: (row) => formatSmaVsPrice(row, 76) },
+      { key: 77, label: 'SMA200', className: 'text-end', render: (row) => formatSmaVsPrice(row, 77) }
     ]
   },
   {
@@ -145,8 +145,8 @@ async function loadScreener() {
 
     const payload = await response.json();
     screenerRows = payload?.data || [];
-  await loadSelectedStockSymbols();
-  workingRows = getSourceRows();
+    await loadSelectedStockSymbols();
+    workingRows = getSourceRows();
     await loadPreviousWeeksPerformance();
     updatePerformancePreviousWeekLabels();
 
@@ -293,13 +293,13 @@ function renderActiveTabTable() {
         <tr>
           <th class="text-end">#</th>
           ${columns.map((col, index) => {
-            const isActiveSort = sortState.tabId === activeTabId && sortState.columnIndex === index;
-            const arrow = isActiveSort
-              ? (sortState.direction === 'asc' ? ' ↑' : ' ↓')
-              : '';
+    const isActiveSort = sortState.tabId === activeTabId && sortState.columnIndex === index;
+    const arrow = isActiveSort
+      ? (sortState.direction === 'asc' ? ' ↑' : ' ↓')
+      : '';
 
-            return `<th class="${col.className || ''} screener-sortable" data-col-index="${index}">${col.label}${arrow}</th>`;
-          }).join('')}
+    return `<th class="${col.className || ''} screener-sortable" data-col-index="${index}">${col.label}${arrow}</th>`;
+  }).join('')}
         </tr>
       </thead>
       <tbody>
