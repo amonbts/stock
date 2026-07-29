@@ -72,6 +72,18 @@ tv-mini-chart {
   width: 100%;
 }
 
+#screener-table-root thead th {
+  font-size: 0.80rem;
+  font-weight: normal;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+#screener-table-root tbody td {
+  /* font-size: 14px; */
+  font-size: 0.88rem;
+}
+
 .screener-state-pill {
   font-size: 0.75rem;
 }
