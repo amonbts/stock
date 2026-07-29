@@ -259,17 +259,16 @@ const COLUMNS = [
     "SMA200",
     // "RSI"
 
-    "earnings_per_share_estimate_next_fq",
-    "revenue_estimate_next_fq",
     "price_target_average",
     "price_target_high",
     "price_target_low",
     "price_target_median",
-    "earnings_per_share_forecast_next_fq",
+    "earnings_per_share_forecast_next_fy",
     "earnings_per_share_forecast_fq",
-    "earnings_per_share_forecast_fy",
-    "revenue_forecast_next_fq",
-    "revenue_forecast_fy"
+    "earnings_per_share_forecast_next_fq",
+    "revenue_forecast_next_fy",
+    "revenue_forecast_fq",
+    "revenue_forecast_next_fq"
 ];
 
 

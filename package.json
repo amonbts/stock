@@ -5,7 +5,7 @@
         "build:stockdata": "node scripts/tv_export.js",
         "serve": "serve . --listen 4173",
         "start": "npm run serve",
-        "start:local": "npm run build:data && npm run serve"
+        "start:local": "npm run build:data && npm run build:stockdata && npm run serve"
     },
     "dependencies": {
         "axios": "^1.15.0",
