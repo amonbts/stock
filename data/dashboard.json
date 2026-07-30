@@ -293,6 +293,13 @@
         "Watching",
         "Stocks"
       ]
+    }    ,
+    {
+      "symbol": "NASDAQ:GOOGL",
+      "groups": [
+        "Watching",
+        "Stocks"
+      ]
     }
   ]
 }
