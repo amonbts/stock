@@ -11,6 +11,7 @@
     "Stocks",
     "Watching",
     "Indexes",
+    "GPW",
     "Old"
   ],
   "widgets": [
@@ -118,7 +119,8 @@
       "symbol": "GPW:DIA",
       "groups": [
         "BossaG",
-        "Stocks"
+        "Stocks",
+        "GPW"
       ]
     },
     {
@@ -126,7 +128,8 @@
       "groups": [
         "BossaG",
         "ETFs",
-        "BossaE"
+        "BossaE",
+        "GPW"
       ]
     },
     {
@@ -141,14 +144,16 @@
       "symbol": "GPW:NVO",
       "groups": [
         "BossaG",
-        "Stocks"
+        "Stocks",
+        "GPW"
       ]
     },
     {
       "symbol": "GPW:ETFBM40TR",
       "groups": [
         "BossaE",
-        "ETFs"
+        "ETFs",
+        "GPW"
       ]
     },
     {
@@ -238,8 +243,22 @@
         "ETFs"
       ]
     },
+     {
+      "symbol": "FWB:IART",
+      "groups": [
+        "XTB",
+        "ETFs"
+      ]
+    },
     {
       "symbol": "XETR:SEC0",
+      "groups": [
+        "XTB",
+        "ETFs"
+      ]
+    },
+    {
+      "symbol": "FWB:SEC0",
       "groups": [
         "XTB",
         "ETFs"
@@ -293,12 +312,50 @@
         "Watching",
         "Stocks"
       ]
-    }    ,
+    },
     {
       "symbol": "NASDAQ:GOOGL",
       "groups": [
         "Watching",
         "Stocks"
+      ]
+    },
+    {
+      "symbol": "GPW:CRI",
+      "groups": [
+        "Watching",
+        "Stocks",
+        "GPW"
+      ]
+    },
+    {
+      "symbol": "GPW:SCW",
+      "groups": [
+        "Watching",
+        "Stocks",
+        "GPW"
+      ]
+    },
+    {
+      "symbol": "NEWCONNECT:LFR",
+      "groups": [
+        "Watching",
+        "Stocks",
+        "GPW"
+      ]
+    },
+    {
+      "symbol": "LSE:SMH",
+      "groups": [
+        "XTB",
+        "ETFs"
+      ]
+    },
+    {
+      "symbol": "EURONEXT:SEMI",
+      "groups": [
+        "XTB",
+        "ETFs"
       ]
     }
   ]
