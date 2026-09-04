@@ -111,6 +111,12 @@
       "symbol": "GETTEX:ASME",
       "groups": [
         "BossaG",
+        "Stocks"
+      ]
+    },
+    {
+      "symbol": "NASDAQ:ASML",
+      "groups": [
         "XTB",
         "Stocks"
       ]
