@@ -34,7 +34,8 @@
       "symbol": "NASDAQ:TSLA",
       "groups": [
         "XTB",
-        "Stocks"
+        "Stocks",
+        "Old"
       ]
     },
     {
@@ -62,7 +63,8 @@
       "symbol": "NASDAQ:STX",
       "groups": [
         "XTB",
-        "Stocks"
+        "Stocks",
+        "Old"
       ]
     },
     {
@@ -155,6 +157,14 @@
       ]
     },
     {
+      "symbol": "OMXCOP-NOVO_B",
+      "groups": [
+        "Watching",
+        "Stocks"
+      ]
+    },
+
+    {
       "symbol": "GPW:ETFBM40TR",
       "groups": [
         "BossaE",
@@ -237,6 +247,13 @@
     },
     {
       "symbol": "FWB:IFX",
+      "groups": [
+        "XTB",
+        "Stocks"
+      ]
+    },
+    {
+      "symbol": "XETR:IFX",
       "groups": [
         "XTB",
         "Stocks"
