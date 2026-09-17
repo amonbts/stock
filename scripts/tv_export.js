@@ -60,7 +60,7 @@ const INDEX_CONFIG = {
             symbolset: ["SYML:NASDAQ;SOX", "SYML:SP;SPX", "SYML:NASDAQ;NDX", "SYML:TVC;SXXP"],
         },
         endpoint: "global",
-        range: [0, 1000],
+        range: [0, 1500],
         filter: [
             {
                 left: "market_cap_basic",
