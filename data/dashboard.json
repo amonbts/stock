@@ -380,6 +380,14 @@
         "XTB",
         "ETFs"
       ]
+    },
+    {
+      "symbol": "EURONEXT:BESI",
+      "groups": [
+        "Stocks",
+        "XTB",
+        "Watching"
+      ]
     }
   ]
 }
