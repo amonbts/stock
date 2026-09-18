@@ -65,7 +65,7 @@ const INDEX_CONFIG = {
             {
                 left: "market_cap_basic",
                 operation: "egreater",
-                right: 6000000000
+                right: 4500000000
             },
             {
                 left: "is_blacklisted",
