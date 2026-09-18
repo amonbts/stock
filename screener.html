@@ -23,7 +23,9 @@
 
     <ul class="nav nav-tabs mb-3" id="screener-tabs" role="tablist"></ul>
 
-    <div id="screener-controls" class="d-none d-flex align-items-center gap-2 mb-3">
+    <div id="screener-controls" class="d-none d-flex flex-wrap align-items-center gap-2 mb-3">
+      <label for="data-week-select" class="form-label mb-0 text-body-secondary">Data week:</label>
+      <select id="data-week-select" class="form-select form-select-sm" style="width: 180px;"></select>
       <label for="top-n-select" class="form-label mb-0 text-body-secondary">Rows:</label>
       <select id="top-n-select" class="form-select form-select-sm" style="width: 120px;">
         <option value="all" selected>All</option>

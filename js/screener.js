@@ -11,6 +11,8 @@ let previousWeekLabelByOffset = {
 };
 let selectedStocksOnly = false;
 let selectedStockSymbols = new Set();
+let selectedDataWeekOffset = 1;
+let dataWeekOptions = [];
 
 let screenerRows = [];
 let workingRows = [];
@@ -28,6 +30,9 @@ const URL_PARAM_STEPS = 'steps';
 const URL_PARAM_SORT = 'sort';
 const URL_PARAM_DIR = 'dir';
 const URL_PARAM_TOP = 'top';
+const URL_PARAM_DATA_OFFSET = 'dataOffset';
+const DATA_WEEK_LOOKBACK = 20;
+const DEFAULT_DATA_WEEK_OFFSET = 1;
 
 const TAB_CONFIG = [
   {
@@ -147,30 +152,28 @@ const TAB_CONFIG = [
 async function loadScreener() {
   const status = document.getElementById('screener-status');
   const controls = document.getElementById('screener-controls');
+  const dataWeekSelect = document.getElementById('data-week-select');
   const topSelect = document.getElementById('top-n-select');
   const selectedStocksOnlyToggle = document.getElementById('selected-stocks-only');
   const undoButton = document.getElementById('screener-undo');
   const resetButton = document.getElementById('screener-reset');
 
   try {
-    const { year, week, candidates } = buildCurrentDataPathCandidates();
-    const { response, selectedPath } = await fetchFirstAvailableDataPath(candidates);
-
-    if (!response || !response.ok || !selectedPath) {
-      throw new Error(
-        `Cannot find screener data for ${year}-${week}. Tried: ${candidates.join(', ')}`
-      );
-    }
-
-    activeDataPath = selectedPath;
-    updateDataSourceLabel(activeDataPath);
-
-    const payload = await response.json();
-    screenerRows = payload?.data || [];
+    await populateDataWeekSelect(dataWeekSelect);
     await loadSelectedStockSymbols();
-    workingRows = getSourceRows();
-    await loadPreviousWeeksPerformance();
-    updatePerformancePreviousWeekLabels();
+
+    if (dataWeekSelect) {
+      dataWeekSelect.addEventListener('change', async () => {
+        const nextOffset = Number(dataWeekSelect.value);
+
+        if (!Number.isInteger(nextOffset)) {
+          return;
+        }
+
+        selectedDataWeekOffset = nextOffset;
+        await loadScreenerDataForSelectedWeek({ applyUrlState: false });
+      });
+    }
 
     if (topSelect) {
       topSelect.addEventListener('change', () => {
@@ -215,17 +218,93 @@ async function loadScreener() {
     controls?.classList.remove('d-none');
     document.getElementById('screener-state')?.classList.remove('d-none');
 
-    applyStateFromUrl();
-
     renderTabs();
-    renderActiveTabTable();
-
-    status.className = 'alert alert-success';
-    status.textContent = `Loaded ${screenerRows.length} rows from ${activeDataPath}`;
+    await loadScreenerDataForSelectedWeek({ applyUrlState: true });
   } catch (error) {
     updateDataSourceLabel('unavailable');
     status.className = 'alert alert-danger';
     status.textContent = `Cannot load screener data: ${error.message}`;
+  }
+}
+
+async function populateDataWeekSelect(select) {
+  dataWeekOptions = await getAvailableDataWeekOptions(DATA_WEEK_LOOKBACK);
+
+  if (dataWeekOptions.length === 0) {
+    throw new Error(`Cannot find screener data from the last ${DATA_WEEK_LOOKBACK} weeks.`);
+  }
+
+  selectedDataWeekOffset = getInitialDataWeekOffset(dataWeekOptions);
+
+  if (!select) {
+    return;
+  }
+
+  select.innerHTML = dataWeekOptions.map((option) => `
+    <option value="${option.offset}" ${option.offset === selectedDataWeekOffset ? 'selected' : ''}>
+      ${escapeHtml(option.label)}
+    </option>
+  `).join('');
+}
+
+async function loadScreenerDataForSelectedWeek({ applyUrlState = false } = {}) {
+  const status = document.getElementById('screener-status');
+  const dataWeekSelect = document.getElementById('data-week-select');
+  const selectedOption = dataWeekOptions.find((option) => option.offset === selectedDataWeekOffset);
+
+  if (!selectedOption) {
+    throw new Error('Selected data week is unavailable.');
+  }
+
+  if (status) {
+    status.className = 'alert alert-secondary';
+    status.textContent = `Loading screener data from ${selectedOption.label}...`;
+  }
+
+  if (dataWeekSelect) {
+    dataWeekSelect.disabled = true;
+  }
+
+  try {
+    const response = await fetch(selectedOption.path, { cache: 'no-store' });
+
+    if (!response.ok) {
+      throw new Error(`Cannot load ${selectedOption.path}`);
+    }
+
+    activeDataPath = selectedOption.path;
+    updateDataSourceLabel(activeDataPath);
+
+    const payload = await response.json();
+    screenerRows = payload?.data || [];
+    workingRows = getSourceRows();
+    await loadPreviousWeeksPerformance(selectedDataWeekOffset);
+    updatePerformancePreviousWeekLabels();
+
+    if (applyUrlState) {
+      applyStateFromUrl();
+    } else {
+      applyCurrentViewToSourceRows();
+    }
+
+    renderTabs();
+
+    if (status) {
+      status.className = 'alert alert-success';
+    }
+
+    renderActiveTabTable();
+  } catch (error) {
+    updateDataSourceLabel('unavailable');
+
+    if (status) {
+      status.className = 'alert alert-danger';
+      status.textContent = `Cannot load screener data: ${error.message}`;
+    }
+  } finally {
+    if (dataWeekSelect) {
+      dataWeekSelect.disabled = false;
+    }
   }
 }
 
@@ -509,6 +588,28 @@ function replayPipelineHistory() {
   }
 }
 
+function applyCurrentViewToSourceRows() {
+  workingRows = getSourceRows();
+
+  if (pipelineHistory.length > 0) {
+    replayPipelineHistory();
+    return;
+  }
+
+  if (rowLimit === 'all') {
+    return;
+  }
+
+  const activeTab = TAB_CONFIG.find((tab) => tab.id === activeTabId);
+  const n = Number(rowLimit);
+
+  if (!activeTab || !Number.isFinite(n) || n <= 0) {
+    return;
+  }
+
+  workingRows = getSortedRows(workingRows, activeTab).slice(0, n);
+}
+
 function applyStateFromUrl() {
   const params = new URLSearchParams(window.location.search);
   const tabFromUrl = params.get(URL_PARAM_TAB);
@@ -635,6 +736,12 @@ function syncStateToUrl() {
 
   params.set(URL_PARAM_TAB, activeTabId);
 
+  if (selectedDataWeekOffset !== DEFAULT_DATA_WEEK_OFFSET) {
+    params.set(URL_PARAM_DATA_OFFSET, String(selectedDataWeekOffset));
+  } else {
+    params.delete(URL_PARAM_DATA_OFFSET);
+  }
+
   if (pipelineHistory.length > 0) {
     params.set(URL_PARAM_STEPS, serializeStepsForUrl(pipelineHistory));
   } else {
@@ -681,7 +788,7 @@ function serializeStepsForUrl(steps) {
     .join(',');
 }
 
-async function loadPreviousWeeksPerformance() {
+async function loadPreviousWeeksPerformance(baseWeekOffset = selectedDataWeekOffset) {
   previousWeek1WByOffset = {
     1: new Map(),
     2: new Map(),
@@ -695,7 +802,7 @@ async function loadPreviousWeeksPerformance() {
   };
 
   for (const offset of [1, 2, 3]) {
-    const weekInfo = getIsoWeekInfoByOffset(offset);
+    const weekInfo = getIsoWeekInfoByOffset(baseWeekOffset + offset);
     const candidates = buildDataPathCandidatesForIsoWeek(weekInfo.year, weekInfo.week);
     const { response, selectedPath } = await fetchFirstAvailableDataPath(candidates);
 
@@ -764,6 +871,77 @@ function getIsoWeekInfoByOffset(weeksOffset) {
   return getIsoWeekInfo(shifted);
 }
 
+async function getAvailableDataWeekOptions(lookbackWeeks) {
+  const options = [];
+
+  for (let offset = 0; offset < lookbackWeeks; offset += 1) {
+    const weekInfo = getIsoWeekInfoByOffset(offset);
+    const candidates = buildDataPathCandidatesForIsoWeek(weekInfo.year, weekInfo.week);
+    const selectedPath = await findAvailableDataPath(candidates);
+
+    if (!selectedPath) {
+      continue;
+    }
+
+    options.push({
+      offset,
+      year: weekInfo.year,
+      week: weekInfo.week,
+      path: selectedPath,
+      label: formatDataWeekOptionLabel(weekInfo, offset)
+    });
+  }
+
+  return options;
+}
+
+async function findAvailableDataPath(candidates) {
+  for (const path of candidates) {
+    try {
+      const response = await fetch(path, { method: 'HEAD', cache: 'no-store' });
+
+      if (response.ok) {
+        return path;
+      }
+    } catch {
+      // try next candidate
+    }
+  }
+
+  return '';
+}
+
+function getInitialDataWeekOffset(options) {
+  const params = new URLSearchParams(window.location.search);
+  const offsetFromUrl = Number(params.get(URL_PARAM_DATA_OFFSET));
+
+  if (Number.isInteger(offsetFromUrl) && options.some((option) => option.offset === offsetFromUrl)) {
+    return offsetFromUrl;
+  }
+
+  const defaultOption = options.find((option) => option.offset === DEFAULT_DATA_WEEK_OFFSET);
+
+  if (defaultOption) {
+    return defaultOption.offset;
+  }
+
+  return options.find((option) => option.offset > 0)?.offset ?? options[0].offset;
+}
+
+function formatDataWeekOptionLabel(weekInfo, offset) {
+  const weekLabel = `${weekInfo.year}-${String(weekInfo.week).padStart(2, '0')}`;
+
+  if (offset === 0) {
+    return `${weekLabel} (current week)`;
+  }
+
+  if (offset === 1) {
+    return `${weekLabel} (previous week)`;
+  }
+
+  return `${weekLabel} (${offset} weeks ago)`;
+}
+
 function getWeekLabelFromPath(path) {
   if (!path) {
     return '';
@@ -771,17 +949,6 @@ function getWeekLabelFromPath(path) {
 
   const match = String(path).match(/tradingview_CUSTOM_(\d{4}-\d{1,2})\.json/i);
   return match?.[1] || '';
-}
-
-function buildCurrentDataPathCandidates() {
-  const { year, week } = getIsoWeekInfo(new Date());
-  const candidates = buildDataPathCandidatesForIsoWeek(year, week);
-
-  return {
-    year,
-    week,
-    candidates
-  };
 }
 
 function buildDataPathCandidatesForIsoWeek(year, week) {
@@ -963,6 +1130,10 @@ function getSortValue(row, column) {
 
   if (column.key === 'price_target_low_pct') {
     return getPriceTargetPercentByIndex(row, 80);
+  }
+
+  if (column.key === 'price_target_median_pct') {
+    return getPriceTargetPercentByIndex(row, 81);
   }
 
   if (column.key === 'prev1w_1') {
