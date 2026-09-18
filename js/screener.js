@@ -109,6 +109,7 @@ const TAB_CONFIG = [
       { key: 80, label: 'Price Target Low', className: 'text-end', render: (row) => formatNumber(row?.d?.[80]) },
       { key: 'price_target_low_pct', label: 'Price Target Low %', className: 'text-end', render: (row) => formatPercent(getPriceTargetPercentByIndex(row, 80)) },
       { key: 81, label: 'Price Target Median', className: 'text-end', render: (row) => formatNumber(row?.d?.[81]) },
+      { key: 'price_target_median_pct', label: 'Price Target Median %', className: 'text-end', render: (row) => formatPercent(getPriceTargetPercentByIndex(row, 81)) },
       { key: 82, label: 'EPS Forecast (Next FY)', className: 'text-end', render: (row) => formatNumber(row?.d?.[82]) },
       { key: 83, label: 'EPS Forecast (FQ)', className: 'text-end', render: (row) => formatNumber(row?.d?.[83]) },
       { key: 84, label: 'EPS Forecast (Next FQ)', className: 'text-end', render: (row) => formatNumber(row?.d?.[84]) },
