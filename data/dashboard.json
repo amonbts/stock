@@ -388,6 +388,13 @@
         "XTB",
         "Watching"
       ]
+    },
+    {
+      "symbol": "NASDAQ:AVGO",
+      "groups": [
+        "Stocks",
+        "Watching"
+      ]
     }
   ]
 }
