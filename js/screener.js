@@ -50,6 +50,7 @@ const TAB_CONFIG = [
       { key: 14, label: 'Rel vol', className: 'text-end', render: (row) => formatNumber(row?.d?.[14]) },
       { key: 15, label: 'Mkt cap', className: 'text-end', render: (row) => formatLargeNumber(row?.d?.[15]) },
       { key: 17, label: 'P/E', className: 'text-end', render: (row) => formatNumber(row?.d?.[17]) },
+      { key: 88, label: 'Forward P/E', className: 'text-end', render: (row) => formatNumber(row?.d?.[88]) },
       { key: 18, label: 'EPS dil TTM', className: 'text-end', render: (row) => formatNumber(row?.d?.[18]) },
       { key: 19, label: 'EPS dil growth TTM YoY', className: 'text-end', render: (row) => formatPercent(row?.d?.[19]) },
       { key: 20, label: 'Div yield % TTM', className: 'text-end', render: (row) => formatPercent(row?.d?.[20]) },
@@ -121,6 +122,7 @@ const TAB_CONFIG = [
       { key: 85, label: 'Revenue Forecast (Next FY)', className: 'text-end', render: (row) => formatLargeNumber(row?.d?.[85]) },
       { key: 86, label: 'Revenue Forecast (FQ)', className: 'text-end', render: (row) => formatLargeNumber(row?.d?.[86]) },
       { key: 87, label: 'Revenue Forecast (Next FQ)', className: 'text-end', render: (row) => formatLargeNumber(row?.d?.[87]) }
+      
     ]
   },
   {

@@ -268,7 +268,8 @@ const COLUMNS = [
     "earnings_per_share_forecast_next_fq",
     "revenue_forecast_next_fy",
     "revenue_forecast_fq",
-    "revenue_forecast_next_fq"
+    "revenue_forecast_next_fq",
+    "price_earnings_fwd"
 ];
 
 
