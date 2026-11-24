@@ -395,6 +395,13 @@
         "Stocks",
         "Watching"
       ]
+    },
+    {
+      "symbol": "NASDAQ:ANT",
+      "groups": [
+        "Stocks",
+        "XTB"
+      ]
     }
   ]
 }
